@@ -1008,9 +1008,29 @@ export default function Portfolio() {
     return () => s.remove();
   }, []);
 
+  // Auto-highlight nav based on scroll position
+  useEffect(() => {
+    const sections = ['home', 'about', 'skills', 'projects', 'github', 'music', 'contact'];
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      // fires when section crosses the middle band of the screen
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+    );
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, []);
+
   const scrollTo = id => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-    setActiveSection(id);
   };
 
   const particles = [...Array(20)].map((_, i) => ({
