@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./public/avatar.jpg" width="150" height="150" style="border-radius: 50%; border: 3px solid #e74c3c;" alt="Lapalu Liyanage" />
+
 
 # 💻 LAPALU LIYANAGE · PORTFOLIO
 
