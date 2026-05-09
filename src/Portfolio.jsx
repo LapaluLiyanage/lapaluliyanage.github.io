@@ -748,6 +748,60 @@ textarea.form-input { min-height: 120px; resize: vertical; clip-path: none; }
 .t-cmd { color: var(--white); }
 .t-out { color: var(--muted); }
 .t-val { color: var(--ember); }
+
+/* Loader */
+.loader-container {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 9990;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+.loader-container.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+.loader-terminal {
+  width: 90%; max-width: 500px;
+  background: #080808;
+  border: 1px solid var(--border);
+  padding: 24px;
+  box-shadow: 0 0 40px rgba(231,76,60,0.1);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+.loader-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--flame);
+  white-space: pre-wrap;
+  line-height: 1.8;
+  min-height: 100px;
+  margin-top: 16px;
+}
+.loader-cursor {
+  animation: type-cursor 1s infinite;
+}
+.loader-progress {
+  width: 100%; height: 3px;
+  background: rgba(192,57,43,0.2);
+  margin-top: 24px;
+  overflow: hidden;
+}
+.loader-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--crimson), var(--ember));
+  width: 0%;
+  animation: load-bar 2.2s ease-out forwards;
+  box-shadow: 0 0 10px rgba(231,76,60,0.5);
+}
+@keyframes load-bar {
+  0% { width: 0%; }
+  30% { width: 35%; }
+  50% { width: 45%; }
+  80% { width: 80%; }
+  100% { width: 100%; }
+}
 `;
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -1007,11 +1061,52 @@ function ScrollToTop() {
   );
 }
 
+// ─── Loading Screen ───────────────────────────────────────────────────────────
+function LoadingScreen({ onComplete }) {
+  const [text, setText] = useState('');
+  const [hidden, setHidden] = useState(false);
+  const fullText = "> INITIALIZING NEURAL LINK...\n> LOADING PORTFOLIO MODULES...\n> BYPASSING SECURITY PROTOCOLS...\n> ACCESS GRANTED.";
+  
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      setText(fullText.slice(0, i));
+      i++;
+      if (i > fullText.length) clearInterval(timer);
+    }, 25);
+    
+    const hideTimer = setTimeout(() => {
+      setHidden(true);
+      setTimeout(onComplete, 500); // Wait for fade out
+    }, 2500);
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(hideTimer);
+    };
+  }, [onComplete, fullText]);
+
+  return (
+    <div className={`loader-container ${hidden ? 'hidden' : ''}`}>
+      <div className="loader-terminal">
+        <div className="terminal-header">
+          <div className="dot dot-r"/><div className="dot dot-y"/><div className="dot dot-g"/>
+        </div>
+        <div className="loader-text">{text}<span className="loader-cursor">_</span></div>
+        <div className="loader-progress">
+          <div className="loader-bar"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main App ─────────────────────────────────────────────────────────────────
 export default function Portfolio() {
   const cursorRef = useRef();
   const ringRef = useRef();
   const [activeSection, setActiveSection] = useState('home');
+  const [isLoading, setIsLoading] = useState(true);
 
   useReveal();
 
@@ -1078,6 +1173,8 @@ export default function Portfolio() {
       {/* Cursor */}
       <div ref={cursorRef} className="cursor"/>
       <div ref={ringRef} className="cursor-ring"/>
+
+      {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
 
       {/* Nav */}
       <nav className="nav">
