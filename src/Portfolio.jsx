@@ -650,6 +650,39 @@ textarea.form-input { min-height: 120px; resize: vertical; clip-path: none; }
   background: linear-gradient(180deg, var(--crimson), transparent);
 }
 
+/* Scroll-to-top button */
+.scroll-top {
+  position: fixed;
+  bottom: 40px;
+  right: 32px;
+  width: 44px;
+  height: 44px;
+  background: var(--crimson);
+  border: 1px solid var(--flame);
+  color: var(--white);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+  z-index: 850;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px);
+  transition: opacity 0.35s ease, transform 0.35s ease, box-shadow 0.3s;
+  animation: pulse-glow 3s infinite;
+}
+.scroll-top.visible {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+.scroll-top:hover {
+  background: var(--flame);
+  box-shadow: var(--glow);
+}
+
 /* Flame decoration */
 .flame-deco {
   position: absolute;
@@ -918,6 +951,27 @@ function SkillBar({ name, level }) {
       <div className="skill-name"><span>{name}</span><span style={{color:'var(--ember)'}}>{level}%</span></div>
       <div className="skill-bar"><div className="skill-fill" style={{width:`${w}%`}}/></div>
     </div>
+  );
+}
+
+// ─── Scroll-to-top button ────────────────────────────────────────────────────
+function ScrollToTop() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 400);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <button
+      id="scroll-to-top"
+      className={`scroll-top${visible ? ' visible' : ''}`}
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      aria-label="Scroll to top"
+      title="Back to top"
+    >
+      ↑
+    </button>
   );
 }
 
@@ -1206,6 +1260,9 @@ export default function Portfolio() {
         <div className="footer-logo">LAPALU.DEV</div>
         <div className="footer-copy">© 2025 LAPALU LIYANAGE · BUILT WITH 🔥 + REACT</div>
       </footer>
+
+      {/* Scroll to top */}
+      <ScrollToTop/>
     </div>
   );
 }
