@@ -746,27 +746,27 @@ const MUSIC_EVENTS = [
 // ─── Animated flame SVG ───────────────────────────────────────────────────────
 function FlameSVG() {
   return (
-    <svg viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:'100%'}}>
+    <svg viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
       <defs>
         <radialGradient id="fg1" cx="50%" cy="80%" r="50%">
-          <stop offset="0%" stopColor="#f39c12" stopOpacity="0.9"/>
-          <stop offset="100%" stopColor="#c0392b" stopOpacity="0"/>
+          <stop offset="0%" stopColor="#f39c12" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="#c0392b" stopOpacity="0" />
         </radialGradient>
         <radialGradient id="fg2" cx="50%" cy="70%" r="50%">
-          <stop offset="0%" stopColor="#e74c3c" stopOpacity="0.7"/>
-          <stop offset="100%" stopColor="#c0392b" stopOpacity="0"/>
+          <stop offset="0%" stopColor="#e74c3c" stopOpacity="0.7" />
+          <stop offset="100%" stopColor="#c0392b" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <g style={{animation:'flame-rise 2s ease-in-out infinite'}}>
-        <path d="M100 260 C60 240 30 200 40 150 C50 100 70 80 80 40 C85 20 90 5 100 0 C110 5 115 20 120 40 C130 80 150 100 160 150 C170 200 140 240 100 260Z" fill="url(#fg1)" opacity="0.85"/>
+      <g style={{ animation: 'flame-rise 2s ease-in-out infinite' }}>
+        <path d="M100 260 C60 240 30 200 40 150 C50 100 70 80 80 40 C85 20 90 5 100 0 C110 5 115 20 120 40 C130 80 150 100 160 150 C170 200 140 240 100 260Z" fill="url(#fg1)" opacity="0.85" />
       </g>
-      <g style={{animation:'flame-rise 2.3s 0.3s ease-in-out infinite'}}>
-        <path d="M100 240 C70 220 50 185 58 145 C66 110 80 95 88 65 C92 48 96 30 100 20 C104 30 108 48 112 65 C120 95 134 110 142 145 C150 185 130 220 100 240Z" fill="url(#fg2)" opacity="0.7"/>
+      <g style={{ animation: 'flame-rise 2.3s 0.3s ease-in-out infinite' }}>
+        <path d="M100 240 C70 220 50 185 58 145 C66 110 80 95 88 65 C92 48 96 30 100 20 C104 30 108 48 112 65 C120 95 134 110 142 145 C150 185 130 220 100 240Z" fill="url(#fg2)" opacity="0.7" />
       </g>
-      <g style={{animation:'flame-rise 1.8s 0.6s ease-in-out infinite'}}>
-        <path d="M100 210 C80 195 68 168 74 135 C80 108 92 98 98 78 C99 72 100 60 100 50 C100 60 101 72 102 78 C108 98 120 108 126 135 C132 168 120 195 100 210Z" fill="#febc2e" opacity="0.6"/>
+      <g style={{ animation: 'flame-rise 1.8s 0.6s ease-in-out infinite' }}>
+        <path d="M100 210 C80 195 68 168 74 135 C80 108 92 98 98 78 C99 72 100 60 100 50 C100 60 101 72 102 78 C108 98 120 108 126 135 C132 168 120 195 100 210Z" fill="#febc2e" opacity="0.6" />
       </g>
-      {[...Array(8)].map((_,i) => (
+      {[...Array(8)].map((_, i) => (
         <circle
           key={i}
           cx={80 + Math.sin(i * 0.8) * 30}
@@ -774,7 +774,7 @@ function FlameSVG() {
           r={1.5 + Math.random()}
           fill="#f39c12"
           opacity="0.6"
-          style={{animation:`float ${1.5 + i*0.2}s ${i*0.1}s ease-in-out infinite`}}
+          style={{ animation: `float ${1.5 + i * 0.2}s ${i * 0.1}s ease-in-out infinite` }}
         />
       ))}
     </svg>
@@ -815,19 +815,19 @@ function GitHubSection() {
       {error && (
         <div>
           <p className="error-text">// GitHub profile not yet public or API limit reached</p>
-          <p className="error-text" style={{marginTop:8, color:'var(--muted)'}}>// Connect: github.com/LapaluLiyanage</p>
+          <p className="error-text" style={{ marginTop: 8, color: 'var(--muted)' }}>// Connect: github.com/LapaluLiyanage</p>
         </div>
       )}
       {profile && (
         <>
           <div className="github-header">
-            {profile.avatar_url && <img src={profile.avatar_url} alt="avatar" className="github-avatar"/>}
+            {profile.avatar_url && <img src={profile.avatar_url} alt="avatar" className="github-avatar" />}
             <div>
               <div className="github-name">{profile.name || profile.login}</div>
               <div className="github-bio">{profile.bio || 'Software Engineering Student @ Rajarata University'}</div>
-              <div style={{display:'flex',gap:24,marginTop:8}}>
-                <span style={{fontFamily:"'JetBrains Mono'",fontSize:'0.7rem',color:'var(--ember)'}}>⭐ {profile.public_repos} repos</span>
-                <span style={{fontFamily:"'JetBrains Mono'",fontSize:'0.7rem',color:'var(--muted)'}}>👥 {profile.followers} followers</span>
+              <div style={{ display: 'flex', gap: 24, marginTop: 8 }}>
+                <span style={{ fontFamily: "'JetBrains Mono'", fontSize: '0.7rem', color: 'var(--ember)' }}>⭐ {profile.public_repos} repos</span>
+                <span style={{ fontFamily: "'JetBrains Mono'", fontSize: '0.7rem', color: 'var(--muted)' }}>👥 {profile.followers} followers</span>
               </div>
             </div>
           </div>
@@ -875,8 +875,8 @@ function SkillBar({ name, level }) {
   }, [level]);
   return (
     <div className="skill-item" ref={ref}>
-      <div className="skill-name"><span>{name}</span><span style={{color:'var(--ember)'}}>{level}%</span></div>
-      <div className="skill-bar"><div className="skill-fill" style={{width:`${w}%`}}/></div>
+      <div className="skill-name"><span>{name}</span><span style={{ color: 'var(--ember)' }}>{level}%</span></div>
+      <div className="skill-bar"><div className="skill-fill" style={{ width: `${w}%` }} /></div>
     </div>
   );
 }
@@ -928,18 +928,18 @@ export default function Portfolio() {
   }));
 
   return (
-    <div className="noise" style={{minHeight:'100vh', background:'var(--bg)'}}>
+    <div className="noise" style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       {/* Cursor */}
-      <div ref={cursorRef} className="cursor"/>
-      <div ref={ringRef} className="cursor-ring"/>
+      <div ref={cursorRef} className="cursor" />
+      <div ref={ringRef} className="cursor-ring" />
 
       {/* Nav */}
       <nav className="nav">
         <div className="nav-logo">L.L</div>
         <div className="nav-links">
-          {['home','about','skills','projects','github','music','contact'].map(s => (
-            <a key={s} className="nav-link" onClick={()=>scrollTo(s)}
-              style={activeSection===s?{color:'var(--flame)',textShadow:'var(--glow)'}:{}}
+          {['home', 'about', 'skills', 'projects', 'github', 'music', 'contact'].map(s => (
+            <a key={s} className="nav-link" onClick={() => scrollTo(s)}
+              style={activeSection === s ? { color: 'var(--flame)', textShadow: 'var(--glow)' } : {}}
             >{s}</a>
           ))}
         </div>
@@ -950,21 +950,21 @@ export default function Portfolio() {
         <a className="social-link" href="https://github.com/LapaluLiyanage" target="_blank">GH</a>
         <a className="social-link" href="#" title="Instagram">IG</a>
         <a className="social-link" href="#" title="TikTok">TK</a>
-        <div className="social-line"/>
+        <div className="social-line" />
       </div>
 
       {/* ── HERO ── */}
       <section id="home" className="hero">
-        <div className="hero-bg"/>
-        <div className="hero-grid"/>
+        <div className="hero-bg" />
+        <div className="hero-grid" />
         <div className="particles">
-          {particles.map((p,i) => (
+          {particles.map((p, i) => (
             <div key={i} className="particle" style={{
-              left:p.left, top:p.top,
-              animationDuration:p.animationDuration,
-              animationDelay:p.animationDelay,
-              opacity:p.opacity
-            }}/>
+              left: p.left, top: p.top,
+              animationDuration: p.animationDuration,
+              animationDelay: p.animationDelay,
+              opacity: p.opacity
+            }} />
           ))}
         </div>
         <div className="hero-content">
@@ -980,12 +980,12 @@ export default function Portfolio() {
             Crafting code that solves real problems — and music that moves people.
           </p>
           <div className="hero-ctas">
-            <button className="btn-primary" onClick={()=>scrollTo('projects')}>VIEW PROJECTS</button>
-            <button className="btn-ghost" onClick={()=>scrollTo('contact')}>CONTACT ME</button>
+            <button className="btn-primary" onClick={() => scrollTo('projects')}>VIEW PROJECTS</button>
+            <button className="btn-ghost" onClick={() => scrollTo('contact')}>CONTACT ME</button>
           </div>
           <div className="terminal">
             <div className="terminal-header">
-              <div className="dot dot-r"/><div className="dot dot-y"/><div className="dot dot-g"/>
+              <div className="dot dot-r" /><div className="dot dot-y" /><div className="dot dot-g" />
             </div>
             <div><span className="t-prompt">$ </span><span className="t-cmd">whoami</span></div>
             <div><span className="t-out">→ </span><span className="t-val">Lapalu Liyanage</span></div>
@@ -996,13 +996,13 @@ export default function Portfolio() {
             <div><span className="t-out">  status: </span><span className="t-val">"Building · Performing · Growing"</span></div>
           </div>
         </div>
-        <div className="flame-deco"><FlameSVG/></div>
+        <div className="flame-deco"><FlameSVG /></div>
       </section>
 
-      <div className="divider"/>
+      <div className="divider" />
 
       {/* ── ABOUT ── */}
-      <section id="about" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="about" style={{ padding: '100px 48px', maxWidth: 1200, margin: '0 auto' }}>
         <div className="reveal">
           <div className="section-label">// 01. about me</div>
           <h2 className="section-title">WHO AM I</h2>
@@ -1030,10 +1030,10 @@ export default function Portfolio() {
           <div>
             <div className="stats-grid">
               {[
-                {num:'3rd', label:'Year of Study'},
-                {num:'4+', label:'Live Performances'},
-                {num:'SE', label:'Major Field'},
-                {num:'🔥', label:'Fastunes in Rusl'},
+                { num: '3rd', label: 'Year of Study' },
+                { num: '4+', label: 'Live Performances' },
+                { num: 'SE', label: 'Major Field' },
+                { num: '🔥', label: 'Fastunes in Rusl' },
               ].map(s => (
                 <div key={s.label} className="stat-card">
                   <div className="stat-num">{s.num}</div>
@@ -1045,10 +1045,10 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <div className="divider"/>
+      <div className="divider" />
 
       {/* ── SKILLS ── */}
-      <section id="skills" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="skills" style={{ padding: '100px 48px', maxWidth: 1200, margin: '0 auto' }}>
         <div className="reveal">
           <div className="section-label">// 02. skills</div>
           <h2 className="section-title">TECH STACK</h2>
@@ -1057,16 +1057,16 @@ export default function Portfolio() {
           {SKILLS.map(cat => (
             <div key={cat.cat} className="skill-category reveal">
               <div className="skill-cat-title">[ {cat.cat} ]</div>
-              {cat.items.map(s => <SkillBar key={s.name} name={s.name} level={s.level}/>)}
+              {cat.items.map(s => <SkillBar key={s.name} name={s.name} level={s.level} />)}
             </div>
           ))}
         </div>
       </section>
 
-      <div className="divider"/>
+      <div className="divider" />
 
       {/* ── PROJECTS ── */}
-      <section id="projects" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="projects" style={{ padding: '100px 48px', maxWidth: 1200, margin: '0 auto' }}>
         <div className="reveal">
           <div className="section-label">// 03. projects</div>
           <h2 className="section-title">WHAT I'VE BUILT</h2>
@@ -1093,26 +1093,26 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <div className="divider"/>
+      <div className="divider" />
 
       {/* ── GITHUB ── */}
-      <section id="github" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="github" style={{ padding: '100px 48px', maxWidth: 1200, margin: '0 auto' }}>
         <div className="reveal">
           <div className="section-label">// 04. github</div>
           <h2 className="section-title">OPEN SOURCE</h2>
         </div>
-        <div className="reveal"><GitHubSection/></div>
+        <div className="reveal"><GitHubSection /></div>
       </section>
 
-      <div className="divider"/>
+      <div className="divider" />
 
       {/* ── MUSIC ── */}
-      <section id="music" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="music" style={{ padding: '100px 48px', maxWidth: 1200, margin: '0 auto' }}>
         <div className="reveal">
           <div className="section-label">// 05. music</div>
           <h2 className="section-title">ON STAGE</h2>
         </div>
-        <p className="reveal" style={{color:'var(--muted)', marginBottom:32, maxWidth:560, lineHeight:1.7}}>
+        <p className="reveal" style={{ color: 'var(--muted)', marginBottom: 32, maxWidth: 560, lineHeight: 1.7 }}>
           As a founding performer of <span className="highlight">Fastunes in Rusl</span>, I helped create
           a music culture movement at Rajarata University — from the very first open mic to packed-house closing ceremonies.
         </p>
@@ -1129,24 +1129,24 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <div className="divider"/>
+      <div className="divider" />
 
       {/* ── CONTACT ── */}
-      <section id="contact" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="contact" style={{ padding: '100px 48px', maxWidth: 1200, margin: '0 auto' }}>
         <div className="reveal">
           <div className="section-label">// 06. contact</div>
           <h2 className="section-title">LET'S CONNECT</h2>
         </div>
         <div className="contact-grid reveal">
           <div className="contact-info">
-            <p style={{color:'var(--muted)', marginBottom:32, lineHeight:1.7}}>
+            <p style={{ color: 'var(--muted)', marginBottom: 32, lineHeight: 1.7 }}>
               Open to collaborations, internship opportunities, or just a good tech/music conversation.
             </p>
             {[
-              {icon:'🎓', label:'University', val:'Rajarata University of Sri Lanka'},
-              {icon:'💻', label:'GitHub', val:'github.com/LapaluLiyanage'},
-              {icon:'🎸', label:'Band', val:'Fastunes in Rusl'},
-              {icon:'📍', label:'Location', val:'Sri Lanka'},
+              { icon: '🎓', label: 'University', val: 'Rajarata University of Sri Lanka' },
+              { icon: '💻', label: 'GitHub', val: 'github.com/LapaluLiyanage' },
+              { icon: '🎸', label: 'Band', val: 'Fastunes in Rusl' },
+              { icon: '📍', label: 'Location', val: 'Sri Lanka' },
             ].map(c => (
               <div key={c.label} className="contact-item">
                 <div className="contact-icon">{c.icon}</div>
@@ -1158,18 +1158,18 @@ export default function Portfolio() {
             ))}
           </div>
           <div className="contact-form">
-            <input className="form-input" placeholder="Your name"/>
-            <input className="form-input" placeholder="Your email"/>
-            <input className="form-input" placeholder="Subject"/>
-            <textarea className="form-input" placeholder="Your message..."/>
-            <button className="btn-primary" style={{alignSelf:'flex-start'}}>SEND MESSAGE</button>
+            <input className="form-input" placeholder="Your name" />
+            <input className="form-input" placeholder="Your email" />
+            <input className="form-input" placeholder="Subject" />
+            <textarea className="form-input" placeholder="Your message..." />
+            <button className="btn-primary" style={{ alignSelf: 'flex-start' }}>SEND MESSAGE</button>
           </div>
         </div>
       </section>
 
       {/* ── FOOTER ── */}
       <footer className="footer">
-        <div className="footer-logo">LAPALU.DEV</div>
+        <div className="footer-logo">LAPALU.ME</div>
         <div className="footer-copy">© 2025 LAPALU LIYANAGE · BUILT WITH 🔥 + REACT</div>
       </footer>
     </div>
