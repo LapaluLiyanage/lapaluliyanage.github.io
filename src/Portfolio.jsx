@@ -318,8 +318,9 @@ body {
 .highlight { color: var(--flame); font-weight: 600; }
 .stats-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 60px;
 }
 .stat-card {
   background: var(--bg2);
@@ -343,6 +344,37 @@ body {
   color: var(--muted);
   margin-top: 4px;
   text-transform: uppercase;
+}
+.about-right {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.about-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  aspect-ratio: 3/4;
+  clip-path: polygon(24px 0%, 100% 0%, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0% 100%, 0% 24px);
+  padding: 4px;
+  background: linear-gradient(135deg, var(--crimson), var(--bg3), var(--ember));
+  animation: float 6s ease-in-out infinite;
+}
+.about-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  clip-path: polygon(22px 0%, 100% 0%, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0% 100%, 0% 22px);
+  filter: contrast(1.1) saturate(1.1);
+  background: var(--bg2);
+}
+.about-image-overlay {
+  position: absolute;
+  inset: 4px;
+  background: linear-gradient(0deg, rgba(192,57,43,0.2) 0%, transparent 40%);
+  pointer-events: none;
+  clip-path: polygon(22px 0%, 100% 0%, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0% 100%, 0% 22px);
 }
 
 /* Skills */
@@ -1162,21 +1194,25 @@ export default function Portfolio() {
               for <span className="highlight">Instagram and TikTok</span> — always at the intersection of tech and art.
             </p>
           </div>
-          <div>
-            <div className="stats-grid">
-              {[
-                {num:'3rd', label:'Year of Study'},
-                {num:'4+', label:'Live Performances'},
-                {num:'SE', label:'Major Field'},
-                {num:'🔥', label:'Fastunes in Rusl'},
-              ].map(s => (
-                <div key={s.label} className="stat-card">
-                  <div className="stat-num">{s.num}</div>
-                  <div className="stat-label">{s.label}</div>
-                </div>
-              ))}
+          <div className="about-right">
+            <div className="about-image-wrapper">
+              <img src="/avatar.jpg" alt="Lapalu Liyanage" className="about-image" />
+              <div className="about-image-overlay" />
             </div>
           </div>
+        </div>
+        <div className="stats-grid reveal">
+          {[
+            {num:'3rd', label:'Year of Study'},
+            {num:'4+', label:'Live Performances'},
+            {num:'SE', label:'Major Field'},
+            {num:'🔥', label:'Fastunes in Rusl'},
+          ].map(s => (
+            <div key={s.label} className="stat-card">
+              <div className="stat-num">{s.num}</div>
+              <div className="stat-label">{s.label}</div>
+            </div>
+          ))}
         </div>
       </section>
 
