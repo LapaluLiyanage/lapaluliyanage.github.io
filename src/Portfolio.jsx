@@ -802,6 +802,77 @@ textarea.form-input { min-height: 120px; resize: vertical; clip-path: none; }
   80% { width: 80%; }
   100% { width: 100%; }
 }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .hero-name { font-size: 5rem; }
+  .flame-deco { right: 20px; opacity: 0.5; }
+  .nav { padding: 16px 24px; }
+  .social-bar { left: 12px; }
+}
+
+@media (max-width: 768px) {
+  /* Hide custom cursor on mobile */
+  .cursor, .cursor-ring { display: none !important; }
+  body, * { cursor: auto !important; }
+  
+  /* Nav */
+  .nav { padding: 12px 20px; flex-direction: column; gap: 12px; }
+  .nav-links { gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .nav-link { font-size: 0.65rem; }
+
+  /* Hero */
+  .hero { padding: 140px 20px 40px; text-align: center; }
+  .hero-name { font-size: 3rem; }
+  .hero-desc { margin: 24px auto 0; font-size: 1rem; }
+  .hero-ctas { justify-content: center; flex-direction: column; align-items: stretch; }
+  .btn-primary, .btn-ghost { width: 100%; text-align: center; }
+  .flame-deco { display: none; }
+  
+  /* Sections */
+  .section { padding: 60px 20px; }
+  
+  /* Grids */
+  .about-grid, .music-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  
+  /* About Specific */
+  .about-right { order: -1; }
+  
+  /* Social Bar */
+  .social-bar { 
+    position: static; 
+    flex-direction: row; 
+    justify-content: center; 
+    margin-top: 40px; 
+    padding-bottom: 20px;
+  }
+  .social-line { display: none; }
+  .social-link { width: 44px; height: 44px; font-size: 1rem; }
+  
+  /* Footer */
+  .footer { padding: 24px 20px; flex-direction: column; gap: 16px; text-align: center; }
+  
+  /* GitHub Specific */
+  .github-header { flex-direction: column; text-align: center; }
+  .github-section { padding: 24px 16px; }
+  .github-avatar { margin: 0 auto; }
+  .github-header > div > div:last-child { justify-content: center; }
+  
+  /* Terminal */
+  .terminal { text-align: left; font-size: 0.7rem; }
+}
+
+@media (max-width: 480px) {
+  .hero-name { font-size: 2.5rem; }
+  .section-title { font-size: 2rem; }
+  .stat-card { padding: 16px; }
+  .stat-num { font-size: 1.5rem; }
+  .skill-category { padding: 20px; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .repos-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .about-image-wrapper { max-width: 260px; }
+}
 `;
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -862,40 +933,94 @@ const MUSIC_EVENTS = [
   { icon: "🌟", title: "FASEXPLORE Exhibition", sub: "Closing Ceremony Performance" },
 ];
 
-// ─── Animated flame SVG ───────────────────────────────────────────────────────
-function FlameSVG() {
+// ─── Animated Dev/Music SVG ───────────────────────────────────────────────────
+function DevMusicSVG() {
   return (
-    <svg viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:'100%'}}>
+    <svg viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg" style={{width:'100%',height:'100%', overflow:'visible'}}>
       <defs>
-        <radialGradient id="fg1" cx="50%" cy="80%" r="50%">
-          <stop offset="0%" stopColor="#f39c12" stopOpacity="0.9"/>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#e74c3c" stopOpacity="0.4"/>
           <stop offset="100%" stopColor="#c0392b" stopOpacity="0"/>
         </radialGradient>
-        <radialGradient id="fg2" cx="50%" cy="70%" r="50%">
-          <stop offset="0%" stopColor="#e74c3c" stopOpacity="0.7"/>
-          <stop offset="100%" stopColor="#c0392b" stopOpacity="0"/>
-        </radialGradient>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#f39c12" />
+          <stop offset="100%" stopColor="#e74c3c" />
+        </linearGradient>
+        
+        <style>
+          {`
+            @keyframes svg-float-up {
+              0% { transform: translateY(0) scale(0.8); opacity: 0; }
+              20% { opacity: 0.8; transform: translateY(-40px) scale(1); }
+              80% { opacity: 0.8; transform: translateY(-160px) scale(1); }
+              100% { transform: translateY(-200px) scale(0.8); opacity: 0; }
+            }
+            .svg-float { animation: svg-float-up 4s linear infinite; }
+          `}
+        </style>
       </defs>
-      <g style={{animation:'flame-rise 2s ease-in-out infinite'}}>
-        <path d="M100 260 C60 240 30 200 40 150 C50 100 70 80 80 40 C85 20 90 5 100 0 C110 5 115 20 120 40 C130 80 150 100 160 150 C170 200 140 240 100 260Z" fill="url(#fg1)" opacity="0.85"/>
+      
+      {/* Animated background glow */}
+      <circle cx="100" cy="140" r="90" fill="url(#glow)" style={{animation: 'pulse-glow 4s infinite'}} />
+      
+      {/* Spinning vinyl/CD tracks */}
+      <circle cx="100" cy="140" r="65" fill="none" stroke="#c0392b" strokeWidth="1" opacity="0.4" strokeDasharray="4 8" style={{animation: 'spin-slow 12s linear infinite'}} />
+      <circle cx="100" cy="140" r="80" fill="none" stroke="#e74c3c" strokeWidth="1" opacity="0.3" strokeDasharray="12 12" style={{animation: 'spin-slow 18s linear infinite reverse'}} />
+      
+      {/* Central Code Brackets < > */}
+      <g style={{animation: 'float 5s ease-in-out infinite'}}>
+        <path d="M 50 100 L 15 140 L 50 180" fill="none" stroke="url(#grad1)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" filter="drop-shadow(0 0 8px rgba(243,156,18,0.4))" />
+        <path d="M 150 100 L 185 140 L 150 180" fill="none" stroke="url(#grad1)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" filter="drop-shadow(0 0 8px rgba(243,156,18,0.4))" />
+        
+        {/* The Slash / disguised as a Guitar Neck */}
+        <g transform="rotate(20, 100, 140)">
+          {/* Guitar Neck Base */}
+          <rect x="94" y="60" width="12" height="160" fill="#e74c3c" rx="4" filter="drop-shadow(0 0 10px rgba(231,76,60,0.5))" />
+          {/* Frets */}
+          {[...Array(7)].map((_, i) => (
+            <line key={`fret-${i}`} x1="92" y1={85 + i*22} x2="108" y2={85 + i*22} stroke="#f39c12" strokeWidth="2" />
+          ))}
+          {/* Strings */}
+          <line x1="97" y1="60" x2="97" y2="220" stroke="#f0e6e6" strokeWidth="1" opacity="0.6" />
+          <line x1="100" y1="60" x2="100" y2="220" stroke="#f0e6e6" strokeWidth="1" opacity="0.6" />
+          <line x1="103" y1="60" x2="103" y2="220" stroke="#f0e6e6" strokeWidth="1" opacity="0.6" />
+          {/* Headstock */}
+          <path d="M 92 60 L 108 60 L 112 35 L 88 35 Z" fill="#f39c12" />
+          {/* Tuning Pegs */}
+          <circle cx="86" cy="42" r="3" fill="#e74c3c" />
+          <circle cx="86" cy="52" r="3" fill="#e74c3c" />
+          <circle cx="114" cy="42" r="3" fill="#e74c3c" />
+          <circle cx="114" cy="52" r="3" fill="#e74c3c" />
+        </g>
       </g>
-      <g style={{animation:'flame-rise 2.3s 0.3s ease-in-out infinite'}}>
-        <path d="M100 240 C70 220 50 185 58 145 C66 110 80 95 88 65 C92 48 96 30 100 20 C104 30 108 48 112 65 C120 95 134 110 142 145 C150 185 130 220 100 240Z" fill="url(#fg2)" opacity="0.7"/>
-      </g>
-      <g style={{animation:'flame-rise 1.8s 0.6s ease-in-out infinite'}}>
-        <path d="M100 210 C80 195 68 168 74 135 C80 108 92 98 98 78 C99 72 100 60 100 50 C100 60 101 72 102 78 C108 98 120 108 126 135 C132 168 120 195 100 210Z" fill="#febc2e" opacity="0.6"/>
-      </g>
-      {[...Array(8)].map((_,i) => (
-        <circle
-          key={i}
-          cx={80 + Math.sin(i * 0.8) * 30}
-          cy={260 - i * 15}
-          r={1.5 + Math.random()}
-          fill="#f39c12"
-          opacity="0.6"
-          style={{animation:`float ${1.5 + i*0.2}s ${i*0.1}s ease-in-out infinite`}}
-        />
-      ))}
+
+      {/* Floating Music Notes & Tech Symbols */}
+      {[...Array(15)].map((_,i) => {
+        const isNote = i % 3 === 0;
+        const symbols = ['{', '}', '</>', '01', '10', '★'];
+        const text = isNote ? '♪' : symbols[i % symbols.length];
+        const delay = Math.random() * 4;
+        const duration = 3 + Math.random() * 3;
+        
+        return (
+          <text
+            key={`float-${i}`}
+            x={30 + Math.random() * 140}
+            y={260}
+            fill={isNote ? "#f39c12" : "#e74c3c"}
+            fontSize={isNote ? (16 + Math.random()*12) : (10 + Math.random()*6)}
+            fontFamily={isNote ? "sans-serif" : "'JetBrains Mono', monospace"}
+            fontWeight="bold"
+            className="svg-float"
+            style={{
+              animationDuration: `${duration}s`,
+              animationDelay: `${delay}s`
+            }}
+          >
+            {text}
+          </text>
+        );
+      })}
     </svg>
   );
 }
@@ -1260,13 +1385,13 @@ export default function Portfolio() {
             <div><span className="t-out">  status: </span><span className="t-val">"Building · Performing · Growing"</span></div>
           </div>
         </div>
-        <div className="flame-deco"><FlameSVG/></div>
+        <div className="flame-deco"><DevMusicSVG/></div>
       </section>
 
       <div className="divider"/>
 
       {/* ── ABOUT ── */}
-      <section id="about" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="about" className="section">
         <div className="reveal">
           <div className="section-label">// 01. about me</div>
           <h2 className="section-title">WHO AM I</h2>
@@ -1316,7 +1441,7 @@ export default function Portfolio() {
       <div className="divider"/>
 
       {/* ── SKILLS ── */}
-      <section id="skills" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="skills" className="section">
         <div className="reveal">
           <div className="section-label">// 02. skills</div>
           <h2 className="section-title">TECH STACK</h2>
@@ -1334,7 +1459,7 @@ export default function Portfolio() {
       <div className="divider"/>
 
       {/* ── PROJECTS ── */}
-      <section id="projects" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="projects" className="section">
         <div className="reveal">
           <div className="section-label">// 03. projects</div>
           <h2 className="section-title">WHAT I'VE BUILT</h2>
@@ -1374,7 +1499,7 @@ export default function Portfolio() {
       <div className="divider"/>
 
       {/* ── GITHUB ── */}
-      <section id="github" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="github" className="section">
         <div className="reveal">
           <div className="section-label">// 04. github</div>
           <h2 className="section-title">OPEN SOURCE</h2>
@@ -1385,7 +1510,7 @@ export default function Portfolio() {
       <div className="divider"/>
 
       {/* ── MUSIC ── */}
-      <section id="music" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="music" className="section">
         <div className="reveal">
           <div className="section-label">// 05. music</div>
           <h2 className="section-title">ON STAGE</h2>
@@ -1410,7 +1535,7 @@ export default function Portfolio() {
       <div className="divider"/>
 
       {/* ── CONTACT ── */}
-      <section id="contact" style={{padding:'100px 48px', maxWidth:1200, margin:'0 auto'}}>
+      <section id="contact" className="section">
         <div className="reveal">
           <div className="section-label">// 06. contact</div>
           <h2 className="section-title">LET'S CONNECT</h2>
