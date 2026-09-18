@@ -91,10 +91,48 @@ const SKILLS = [
 ];
 
 const FEATURED = [
-  { title: "AI Study Assistant", desc: "Intelligent study companion with PEAS-based agent architecture, exam mode and spaced repetition for university students.", tags: ["React", "Python", "AI", "PEAS"] },
-  { title: "Fastunes Band Platform", desc: "Full-stack platform for Fastunes in Rusl — event scheduling, open mic registration, performance archive.", tags: ["React", "Node.js", "MongoDB"] },
-  { title: "Campus Event Portal", desc: "Event management for Rajarata University with real-time RSVP, notification engine and an admin dashboard.", tags: ["JavaScript", "Express", "MySQL"] },
-  { title: "Search Agent Simulator", desc: "Visual simulator for classic search algorithms — step-through states, heuristics and cost comparison.", tags: ["Python", "React", "Algorithms"] },
+  {
+    title: "ClipForge",
+    desc: "Save YouTube video as MP4 or extract MP3/WAV, with full quality control — a Chrome extension backed by a local yt-dlp/ffmpeg helper.",
+    tags: ["Python", "Chrome Extension", "yt-dlp", "ffmpeg"],
+    url: "https://github.com/LapaluLiyanage/ClipForge",
+    image: "/projects/clipforge.jpg",
+  },
+  {
+    title: "AudioForge",
+    desc: "Desktop audio downloader and converter built for music production studios — batch format conversion with a fast, focused workflow.",
+    tags: ["Desktop App", "Audio", "Automation"],
+    url: "https://github.com/LapaluLiyanage/AudioForge",
+    image: "/projects/audioforge.jpg",
+  },
+  {
+    title: "Full-Frame",
+    desc: "Chrome/Edge extension that lets you download your own Facebook photo albums as individual files or a single ZIP.",
+    tags: ["JavaScript", "Browser Extension", "Privacy"],
+    url: "https://github.com/LapaluLiyanage/Full-Frame",
+    image: "/projects/full-frame.jpg",
+  },
+  {
+    title: "CeylonPay",
+    desc: "Spring Boot wallet and payment API with JWT authentication and PostgreSQL — built as internship-prep for real-world fintech backends.",
+    tags: ["Java", "Spring Boot", "JWT", "PostgreSQL"],
+    url: "https://github.com/LapaluLiyanage/ceylonpay",
+    image: "/projects/ceylonpay.jpg",
+  },
+  {
+    title: "Civic Insight RAG",
+    desc: "Retrieval-augmented generation assistant that grounds answers about civic and public information in real source documents.",
+    tags: ["Python", "RAG", "LLM", "AI"],
+    url: "https://github.com/LapaluLiyanage/civic-insight-rag",
+    image: "/projects/civic-insight-rag.jpg",
+  },
+  {
+    title: "LearnSync",
+    desc: "AI-powered Learning Management System for faculty and students — group study management, AI summarization and discussion forums.",
+    tags: ["Flask", "Python", "Tailwind", "AI"],
+    url: "https://github.com/LapaluLiyanage/LearnSync",
+    image: "/projects/learnsync.jpg",
+  },
 ];
 
 const FALLBACK_REPOS = [
@@ -181,9 +219,9 @@ export default function Portfolio() {
       try {
         const [p, r] = await Promise.all([
           fetch(`https://api.github.com/users/${GITHUB_USER}`).then((x) => x.json()),
-          fetch(`https://api.github.com/users/${GITHUB_USER}/repos?sort=updated&per_page=40`).then((x) => x.json()),
+          fetch(`https://api.github.com/users/${GITHUB_USER}/repos?sort=updated&per_page=100`).then((x) => x.json()),
         ]);
-        const list = Array.isArray(r) ? r.filter((x) => !x.fork).slice(0, 9) : [];
+        const list = Array.isArray(r) ? r.filter((x) => !x.fork) : [];
         if (!dead) {
           setProfile(p && p.login ? p : null);
           setRepos(list);
@@ -595,7 +633,20 @@ export default function Portfolio() {
             </div>
             <div className="pf-featured-grid">
               {FEATURED.map((f) => (
-                <div key={f.title} data-anim="" className="pf-featured-card">
+                <a key={f.title} href={f.url} target="_blank" rel="noopener noreferrer" data-anim="" className="pf-featured-card">
+                  <div className="pf-featured-image-wrap">
+                    <img
+                      src={f.image}
+                      alt={f.title}
+                      className="pf-featured-image"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                        e.currentTarget.parentElement.classList.add("pf-featured-image-fallback");
+                      }}
+                    />
+                    <span className="pf-featured-image-initial">{f.title.charAt(0)}</span>
+                  </div>
                   <h3 className="pf-featured-title">{f.title}</h3>
                   <p className="pf-featured-desc">{f.desc}</p>
                   <div className="pf-tag-row">
@@ -605,7 +656,7 @@ export default function Portfolio() {
                       </span>
                     ))}
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </div>
