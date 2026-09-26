@@ -95,6 +95,67 @@ function LinkedinMark(props) {
   );
 }
 
+// Counts up from 0 to the leading integer in `value` (keeping any suffix,
+// e.g. "8+" -> counts to 8 then shows "8+") once the element scrolls into
+// view. Falls back to a static render for non-numeric values (e.g. "—").
+function StatCounter({ value }) {
+  const ref = useRef(null);
+  const visible = useRef(false);
+  const started = useRef(false);
+  const match = typeof value === "string" ? value.match(/^(\d+)(.*)$/) : null;
+  const target = match ? parseInt(match[1], 10) : null;
+  const suffix = match ? match[2] : "";
+  const targetRef = useRef(target);
+  const suffixRef = useRef(suffix);
+  targetRef.current = target;
+  suffixRef.current = suffix;
+
+  // Stable across renders (refs, not closed-over props) so a late-firing
+  // IntersectionObserver callback still sees the final GitHub-loaded value
+  // instead of whatever `target` was null-at-mount.
+  const tryStart = useCallback(() => {
+    if (started.current || !visible.current || targetRef.current == null) return;
+    started.current = true;
+    const obj = { v: 0 };
+    gsap.to(obj, {
+      v: targetRef.current,
+      duration: 1.4,
+      ease: "power2.out",
+      onUpdate: () => {
+        if (ref.current) ref.current.textContent = Math.round(obj.v) + suffixRef.current;
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            visible.current = true;
+            io.disconnect();
+            tryStart();
+          }
+        }),
+      { rootMargin: "0px 0px -10% 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [tryStart]);
+
+  useEffect(() => {
+    tryStart();
+  }, [target, tryStart]);
+
+  return (
+    <div ref={ref} className="dv-stat-value">
+      {target == null ? value : "0" + suffix}
+    </div>
+  );
+}
+
 function useNarrow(bp = 860) {
   const [narrow, setNarrow] = useState(false);
   useEffect(() => {
@@ -469,15 +530,15 @@ export default function Portfolio() {
         </p>
         <div className="dv-stats-grid">
           <div data-rv="" className="dv-stat-card">
-            <div className="dv-stat-value">{content.about.statProjectsShipped}</div>
+            <StatCounter value={content.about.statProjectsShipped} />
             <div className="dv-stat-label">Projects shipped</div>
           </div>
           <div data-rv="" className="dv-stat-card">
-            <div className="dv-stat-value">{repoCount != null ? String(repoCount) : "—"}</div>
+            <StatCounter value={repoCount != null ? String(repoCount) : "—"} />
             <div className="dv-stat-label">Public GitHub repos (live)</div>
           </div>
           <div data-rv="" className="dv-stat-card">
-            <div className="dv-stat-value">{content.about.statPapers}</div>
+            <StatCounter value={content.about.statPapers} />
             <div className="dv-stat-label">IEEE-format paper co-authored</div>
           </div>
         </div>
