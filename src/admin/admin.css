@@ -1,0 +1,327 @@
+:root {
+  color-scheme: light;
+  --admin-bg: #f7f7f8;
+  --admin-fg: #16161a;
+  --admin-mute: #6b6b74;
+  --admin-border: #d8d8dc;
+  --admin-accent: #2f6fed;
+  --admin-danger: #c0392b;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--admin-bg);
+  color: var(--admin-fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+}
+h1,
+h2,
+h3 {
+  margin: 0 0 12px 0;
+}
+.admin-loading {
+  padding: 40px;
+  text-align: center;
+  color: var(--admin-mute);
+}
+
+/* Login */
+.admin-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(360px, 100%);
+  background: #fff;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 24px;
+}
+.admin-login-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+.admin-login-form input {
+  padding: 8px 10px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  font-size: 14px;
+}
+.admin-login-form button {
+  margin-top: 8px;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: var(--admin-accent);
+  color: #fff;
+  font-weight: 600;
+}
+.admin-login-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.admin-error {
+  color: var(--admin-danger);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Shell */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 1px solid var(--admin-border);
+}
+.admin-header button {
+  padding: 6px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  background: #fff;
+}
+.admin-body {
+  display: flex;
+  min-height: calc(100vh - 49px);
+}
+.admin-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 190px;
+  flex: none;
+  background: #fff;
+  border-right: 1px solid var(--admin-border);
+  padding: 12px 0;
+}
+.admin-tab {
+  text-align: left;
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: var(--admin-fg);
+  text-decoration: none;
+}
+.admin-tab.active {
+  background: var(--admin-bg);
+  font-weight: 600;
+  border-left: 3px solid var(--admin-accent);
+}
+.admin-tab-link {
+  margin-top: auto;
+  color: var(--admin-accent);
+}
+.admin-main {
+  flex: 1;
+  padding: 24px;
+  max-width: 720px;
+}
+.admin-hint {
+  color: var(--admin-mute);
+  font-size: 12.5px;
+  margin: -6px 0 14px 0;
+}
+.admin-save-status {
+  margin-left: 10px;
+  font-size: 13px;
+  color: var(--admin-mute);
+}
+
+/* Scalar forms */
+.scalar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.scalar-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--admin-mute);
+}
+.scalar-form input,
+.scalar-form textarea,
+.scalar-form select {
+  padding: 8px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--admin-fg);
+  background: #fff;
+}
+.two-col,
+.two-col-inline {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* List editor */
+.list-editor-row {
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #fff;
+}
+.list-editor-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+.list-editor-row-head > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list-editor-row-actions {
+  display: flex;
+  gap: 6px;
+  flex: none;
+}
+.list-editor-row-actions button {
+  padding: 4px 8px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+}
+.list-editor-row-actions button.danger {
+  color: var(--admin-danger);
+  border-color: var(--admin-danger);
+}
+.list-editor-row-actions button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.list-editor-row-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.list-editor-row-fields input,
+.list-editor-row-fields textarea,
+.list-editor-row-fields select {
+  padding: 6px 8px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  width: 100%;
+}
+.list-editor-add {
+  margin-top: 4px;
+  padding: 8px 14px;
+  border: 1px dashed var(--admin-accent);
+  background: none;
+  color: var(--admin-accent);
+  border-radius: 6px;
+}
+
+/* Image upload */
+.image-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+.image-upload-preview {
+  display: block;
+  width: 160px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--admin-border);
+}
+.image-upload-actions {
+  display: flex;
+  gap: 8px;
+}
+.image-upload-actions button {
+  padding: 6px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12.5px;
+}
+.image-upload-status {
+  font-size: 12.5px;
+  color: var(--admin-mute);
+}
+
+/* Cropper */
+.cropper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.cropper-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+.cropper-viewport {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #111;
+  touch-action: none;
+  cursor: grab;
+}
+.cropper-viewport img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none;
+  user-select: none;
+  pointer-events: none;
+}
+.cropper-zoom {
+  width: 280px;
+}
+.cropper-actions {
+  display: flex;
+  gap: 10px;
+}
+.cropper-actions button {
+  padding: 8px 16px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  background: #fff;
+}
+.cropper-actions button.primary {
+  background: var(--admin-accent);
+  border-color: var(--admin-accent);
+  color: #fff;
+  font-weight: 600;
+}

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { DEFAULT_CONTENT } from "./lib/defaultContent";
+import { fetchSiteContent } from "./lib/content";
 import "./Portfolio.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -68,65 +70,9 @@ const SKILL_GROUPS = [
   { title: "ML / AI", items: ["Gemini API", "scikit-learn", "sentence-transformers", "NLP scoring"] },
 ];
 
-const FEATURED = [
-  { keys: ["ceylonpay"], title: "CeylonPay", category: "FULL-STACK", image: "/projects/ceylonpay.jpg", description: "Wallet and P2P payment API. Registration, deposits and phone-number transfers with atomic @Transactional logic and a full audit log. Live on Vercel + Render.", tech: ["Java 21", "Spring Boot", "PostgreSQL", "JWT", "React", "Docker"] },
-  { keys: ["parking"], title: "Smart Parking AI", category: "BACKEND", image: "/projects/smart-parking-ai.jpg", description: "Slot booking with real-time availability, JWT reservations and dynamic pricing. Gemini demand prediction. Race conditions solved with pessimistic row locks.", tech: ["Spring Boot 3", "PostgreSQL", "Gemini", "Testcontainers"] },
-  { keys: ["devscore", "scriptfusion"], title: "DevScore", category: "AI-ML", image: "/projects/devscore.jpg", description: "Final-year research (6-person team). Verifies resume skills against real GitHub activity with semantic matching and AST analysis. IEEE-format paper.", tech: ["Node/Express", "React", "scikit-learn", "Supabase"] },
-  { keys: ["medibloom"], title: "MediBloom", category: "MOBILE", image: "/projects/medibloom.jpg", description: "Offline-first Android medication manager. Reminders that survive reboot, adherence calendar, mood tracking and a Gemini health-assistant chat.", tech: ["Java", "Android MVVM", "Room", "Gemini"] },
-  { keys: ["antcolony", "aco"], title: "Enhanced Ant Colony", category: "AI-ML", image: "/projects/enhanced-ant-colony.jpg", description: "Ant-colony heuristic for the Multi-Objective Transportation Problem, benchmarking four cost-combining strategies against a Vogel-style allocator.", tech: ["Python", "NumPy", "Pandas"] },
-  { keys: ["chord"], title: "ChordScope", category: "FULL-STACK", image: "/projects/chordscope.jpg", description: "Finds advanced chords (7ths, extensions, sus, inversions) in a YouTube song using a 144-chord template-matching recognizer.", tech: ["Flask", "React", "Audio DSP"] },
-  { keys: ["album", "fullframe"], title: "FB Album Kit", category: "TOOLS", image: "/projects/fb-album-kit.jpg", description: "Chrome/Edge extension (Manifest V3) that downloads your own Facebook albums as files or a ZIP. Dependency-free ZIP writer, Node tests.", tech: ["JavaScript", "Manifest V3", "Node"] },
-  { keys: ["smartplanner"], title: "SmartPlanner", category: "TOOLS", image: "/projects/smartplanner.jpg", description: "Object-oriented personal organizer in C++, structured around encapsulated task and schedule classes.", tech: ["C++", "OOP"] },
-];
-
 const FILTER_TABS = ["All", "Full-Stack", "Backend", "AI-ML", "Mobile", "Tools"];
-
-const WORK_ITEMS = [
-  { icon: "♪", role: "President", badge: "CURRENT", solid: true, org: "Fastunes Music Society, Faculty of Applied Sciences, RUSL", location: "Mihinthale, Sri Lanka", dates: "NOW", description: "Lead the society's admin and events: ran an online audition drive, coordinate the 2026 event calendar, and handle formal society correspondence." },
-  { icon: "◆", role: "Grand Finalist", badge: "COMPETITION", solid: false, org: "InnovateX 2025, Team LoopCode", location: "Representing Rajarata University of Sri Lanka", dates: "2025", description: "Took Team LoopCode to the grand finale, showing our work on innovation, problem solving and teamwork." },
-  { icon: "⚗", role: "Secretary", badge: "PAST", solid: false, muted: true, org: "Science Club, Saranath National College", location: "Kuliyapitiya, Sri Lanka", dates: "2019", description: "Ran club administration and coordinated science activities for students." },
-];
-
-const EDU_ITEMS = [
-  { degree: "BSc in Information Technology", school: "Rajarata University of Sri Lanka", detail: "Faculty of Applied Sciences, Mihinthale · 3rd Year", dates: "2022 — PRESENT", status: "● ONGOING" },
-  { degree: "G.C.E. Advanced & Ordinary Level", school: "Saranath National College, Kuliyapitiya", detail: "A/L 2020 · O/L 2017", dates: "2017 — 2020", status: "COMPLETED" },
-];
-
-const CERTS = [
-  { org: "IBM", title: "Introduction to Software Engineering", issuer: "IBM · Coursera", date: "Aug 2024" },
-  { org: "META", title: "Front-End Development", issuer: "Meta · Coursera", date: "2023–24" },
-  { org: "META", title: "Programming with JavaScript", issuer: "Meta · Coursera", date: "2023–24" },
-  { org: "META", title: "Version Control", issuer: "Meta · Coursera", date: "2024" },
-];
-
-const MUSIC_PHOTOS = [
-  { id: "music-live", src: "/music/live.jpg", caption: "LIVE" },
-  { id: "music-stage", src: "/music/stage.jpg", caption: "STAGE" },
-  { id: "music-faculty-day", src: "/music/faculty-day.jpg", caption: "FACULTY DAY" },
-  { id: "music-silhouette", src: "/music/silhouette.jpg", caption: "SOLO" },
-  { id: "music-crew", src: "/music/crew.jpg", caption: "THE CREW" },
-  { id: "music-crowd", src: "/music/crowd.jpg", caption: "CROWD" },
-  { id: "music-practice", src: "/music/practice.jpg", caption: "PRACTICE" },
-  { id: "music-open-mic", src: "/music/open-mic.jpg", caption: "OPEN MIC" },
-];
-
-const MUSIC_HIGHLIGHTS = [
-  { icon: "♪", title: "President, Fastunes", text: "Leading the Faculty of Applied Sciences music society at Rajarata University of Sri Lanka." },
-  { icon: "◉", title: "Online auditions", text: "Organized an online audition drive to bring new student musicians into the society." },
-  { icon: "▦", title: "2026 event calendar", text: "Coordinating the society's full calendar of events and performances for 2026." },
-];
-
-const CONTACT_LINKS = [
-  { label: "EMAIL", value: "lapaluliyanage@gmail.com", href: "mailto:lapaluliyanage@gmail.com" },
-  { label: "PHONE", value: "+94 77 468 0396", href: "tel:+94774680396" },
-  { label: "WEB", value: "lapalu.me", href: "https://lapalu.me" },
-  { label: "GITHUB", value: "LapaluLiyanage", href: "https://github.com/LapaluLiyanage" },
-  { label: "LINKEDIN", value: "lapalu-liyanage", href: "https://linkedin.com/in/lapalu-liyanage" },
-];
-
-const STATEMENT = "I turn ideas into working systems. Wallet APIs that never lose a cent, Android apps that work offline, and AI that checks whether a resume matches the code behind it.";
-const HIGHLIGHT_WORDS = new Set(["working", "systems.", "never", "offline,", "AI"]);
 const TYPE_PHRASES = ["./mvnw spring-boot:run", "docker compose up", "git push origin main"];
+const STATUS_BADGE_CLASS = { current: " solid", notable: "", past: " muted" };
 
 const ago = (d) => {
   const x = Math.floor((Date.now() - new Date(d)) / 864e5);
@@ -267,6 +213,7 @@ export default function Portfolio() {
   const eduLineRef = useRef(null);
   const wordsRef = useRef(null);
 
+  const [content, setContent] = useState(DEFAULT_CONTENT);
   const [filter, setFilter] = useState("All");
   const [showAll, setShowAll] = useState(false);
   const [sent, setSent] = useState(false);
@@ -277,10 +224,25 @@ export default function Portfolio() {
   const typed = useTyped(TYPE_PHRASES);
   const { profile, repos, status } = useGithub(GITHUB_USER);
 
+  useEffect(() => {
+    let dead = false;
+    fetchSiteContent()
+      .then((data) => {
+        if (!dead) setContent(data);
+      })
+      .catch(() => {
+        /* offline or misconfigured: DEFAULT_CONTENT fallback stays in place */
+      });
+    return () => {
+      dead = true;
+    };
+  }, []);
+
   const featured = useMemo(() => {
     const used = new Set();
-    return FEATURED.map((f, i) => {
-      const r = repos.find((x) => !used.has(x.id) && f.keys.some((k) => x.name.toLowerCase().replace(/[-_ ]/g, "").includes(k)));
+    return content.projects.map((f, i) => {
+      const keys = f.keys.split(",").map((k) => k.trim().toLowerCase()).filter(Boolean);
+      const r = repos.find((x) => !used.has(x.id) && keys.some((k) => x.name.toLowerCase().replace(/[-_ ]/g, "").includes(k)));
       if (r) used.add(r.id);
       return {
         ...f,
@@ -290,7 +252,7 @@ export default function Portfolio() {
         demoUrl: r && r.homepage ? r.homepage : "",
       };
     });
-  }, [repos]);
+  }, [repos, content.projects]);
 
   const catOf = (p) => p.category.toLowerCase();
   const filterTabs = FILTER_TABS.filter((l) => l === "All" || featured.some((p) => catOf(p) === l.toLowerCase()));
@@ -395,16 +357,16 @@ export default function Portfolio() {
           <div className="dv-hero-copy">
             <div data-hf="" className="dv-availability">
               <span className="dv-pulse-dot" />
-              <span>AVAILABLE FOR SE INTERNSHIPS</span>
+              <span>{content.hero.availability}</span>
             </div>
             <h1 className="dv-h1">
-              <div className="dv-hl-mask"><div data-hl="" className="dv-hl">An ambitious</div></div>
-              <div className="dv-hl-mask"><div data-hl="" className="dv-hl accent">full-stack developer</div></div>
-              <div className="dv-hl-mask"><div data-hl="" className="dv-hl faint">&amp; AI/ML enthusiast.</div></div>
+              <div className="dv-hl-mask"><div data-hl="" className="dv-hl">{content.hero.headline1}</div></div>
+              <div className="dv-hl-mask"><div data-hl="" className="dv-hl accent">{content.hero.headline2}</div></div>
+              <div className="dv-hl-mask"><div data-hl="" className="dv-hl faint">{content.hero.headline3}</div></div>
             </h1>
-            <p data-hf="" className="dv-hero-sub">I build end-to-end systems with Java/Spring Boot, Python/Flask and React, from schema design to deployment.</p>
+            <p data-hf="" className="dv-hero-sub">{content.hero.subline}</p>
             <div data-hf="" className="dv-hero-actions">
-              <a href="/Lapalu_Liyanage_CV.pdf" download="Lapalu-Liyanage-CV.pdf" className="dv-btn-solid">Download CV ↓</a>
+              <a href={content.hero.cvUrl} download className="dv-btn-solid">Download CV ↓</a>
               <a href="#projects" className="dv-btn-outline">View Projects →</a>
               <a href="#contact" className="dv-btn-outline">Hire Me</a>
             </div>
@@ -422,7 +384,7 @@ export default function Portfolio() {
             <div className="dv-photo-stage">
               <div className="dv-photo-grid" />
               <div className="dv-photo-frame">
-                <img src="/avatar.jpg" alt="Lapalu Liyanage" />
+                <img src={content.hero.photoUrl} alt={content.hero.photoName} />
                 <div className="dv-photo-fade" />
               </div>
               <span className="dv-corner tl" />
@@ -434,10 +396,10 @@ export default function Portfolio() {
               </div>
               <div className="dv-photo-caption">
                 <div>
-                  <div className="dv-photo-name">Lapalu Liyanage</div>
-                  <div className="dv-photo-role">Software Engineer · Musician</div>
+                  <div className="dv-photo-name">{content.hero.photoName}</div>
+                  <div className="dv-photo-role">{content.hero.photoRole}</div>
                 </div>
-                <div className="dv-photo-coords">7.47°N<br />80.04°E</div>
+                <div className="dv-photo-coords">{content.hero.coordsLine1}<br />{content.hero.coordsLine2}</div>
               </div>
               <div className="dv-terminal">
                 <span className="accent">~/lapalu $</span> <span>{typed}</span>
@@ -450,7 +412,7 @@ export default function Portfolio() {
         <div data-hf="" className="dv-hero-footer">
           <div className="dv-hf-cell">
             <span>BASED IN</span>
-            <span className="dv-hf-val">Kuliyapitiya, Sri Lanka</span>
+            <span className="dv-hf-val">{content.hero.basedIn}</span>
           </div>
           <div className="dv-hf-cell">
             <span>LOCAL TIME</span>
@@ -458,7 +420,7 @@ export default function Portfolio() {
           </div>
           <div className="dv-hf-cell">
             <span>STUDYING</span>
-            <span className="dv-hf-val">BSc IT · RUSL</span>
+            <span className="dv-hf-val">{content.hero.studying}</span>
           </div>
           <a href="#about" className="dv-scroll-hint">
             <span>SCROLL</span>
@@ -499,15 +461,15 @@ export default function Portfolio() {
       <section id="about" data-section="about" className="dv-section">
         <div data-rv="" className="dv-eyebrow">[01] ABOUT</div>
         <p ref={wordsRef} className="dv-statement">
-          {STATEMENT.split(" ").map((w, i) => (
-            <span key={i} data-word="" className={HIGHLIGHT_WORDS.has(w) ? "accent" : ""}>
+          {content.about.statement.split(" ").map((w, i) => (
+            <span key={i} data-word="" className={content.about.highlightWords.includes(w) ? "accent" : ""}>
               {w}
             </span>
           ))}
         </p>
         <div className="dv-stats-grid">
           <div data-rv="" className="dv-stat-card">
-            <div className="dv-stat-value">8+</div>
+            <div className="dv-stat-value">{content.about.statProjectsShipped}</div>
             <div className="dv-stat-label">Projects shipped</div>
           </div>
           <div data-rv="" className="dv-stat-card">
@@ -515,25 +477,25 @@ export default function Portfolio() {
             <div className="dv-stat-label">Public GitHub repos (live)</div>
           </div>
           <div data-rv="" className="dv-stat-card">
-            <div className="dv-stat-value">1</div>
+            <div className="dv-stat-value">{content.about.statPapers}</div>
             <div className="dv-stat-label">IEEE-format paper co-authored</div>
           </div>
         </div>
         <div className="dv-about-grid">
           <div data-rv="" className="dv-panel">
             <div className="dv-panel-kicker">HEY, I AM</div>
-            <div className="dv-panel-name">Lapalu Liyanage</div>
-            <p className="dv-panel-text">Third-year BSc IT undergraduate at Rajarata University of Sri Lanka, Mihinthale. I co-authored an IEEE-format paper on automated job-readiness scoring, and I lead the Fastunes Music Society as President.</p>
+            <div className="dv-panel-name">{content.about.bioName}</div>
+            <p className="dv-panel-text">{content.about.bioText}</p>
             <div className="dv-tag-rows">
               <div className="dv-tag-row">
                 <span className="dv-tag solid">Full-Stack Development</span>
-                {["Java", "Spring Boot", "Flask", "React", "PostgreSQL"].map((t) => (
+                {content.about.fsTags.map((t) => (
                   <span key={t} className="dv-tag">{t}</span>
                 ))}
               </div>
               <div className="dv-tag-row">
                 <span className="dv-tag outline">AI/ML Learning Path</span>
-                {["Gemini API", "scikit-learn", "sentence-transformers"].map((t) => (
+                {content.about.mlTags.map((t) => (
                   <span key={t} className="dv-tag">{t}</span>
                 ))}
               </div>
@@ -542,11 +504,11 @@ export default function Portfolio() {
           <div data-rv="" className="dv-panel dv-panel-split">
             <div>
               <div className="dv-panel-kicker accent">→ WHAT I DO</div>
-              <p className="dv-panel-text">Design REST APIs with Spring Boot and Flask, build React and Android front ends, and ship with Docker on Render and Vercel. I add AI features through the Gemini API where they earn their place.</p>
+              <p className="dv-panel-text">{content.about.whatIDo}</p>
             </div>
             <div>
               <div className="dv-panel-kicker accent">→ WHY CHOOSE ME</div>
-              <p className="dv-panel-text">I care about correctness. Transfers that never desync, row locks proven by concurrency tests, AI layers kept behind interfaces so tests never need a live key.</p>
+              <p className="dv-panel-text">{content.about.whyChooseMe}</p>
             </div>
           </div>
         </div>
@@ -639,13 +601,13 @@ export default function Portfolio() {
           </div>
         </div>
         <div className="dv-exp-list">
-          {WORK_ITEMS.map((w) => (
+          {content.work.map((w) => (
             <div key={w.role} data-rv="" className="dv-exp-row">
               <div className="dv-exp-date">{w.dates}</div>
               <div className="dv-exp-main">
                 <div className="dv-exp-head">
                   <h3>{w.role}</h3>
-                  <span className={`dv-exp-badge${w.solid ? " solid" : ""}${w.muted ? " muted" : ""}`}>{w.badge}</span>
+                  <span className={`dv-exp-badge${STATUS_BADGE_CLASS[w.status] || ""}`}>{w.badge}</span>
                 </div>
                 <div className="dv-exp-org">{w.org}</div>
                 <div className="dv-exp-loc">{w.location}</div>
@@ -665,7 +627,7 @@ export default function Portfolio() {
           <div className="dv-timeline-rail" />
           <div ref={eduLineRef} className="dv-timeline-rail-fill" />
           <div className="dv-timeline-items">
-            {EDU_ITEMS.map((e) => (
+            {content.education.map((e) => (
               <div key={e.degree} data-rv="" className="dv-timeline-item">
                 <span className="dv-timeline-dot" />
                 <div className="dv-timeline-meta">
@@ -686,7 +648,7 @@ export default function Portfolio() {
         <div data-rv="" className="dv-eyebrow">[05] CERTIFICATIONS</div>
         <h2 data-rv="" className="dv-h2 dv-h2-spaced">Verified <span className="accent">credentials</span>.</h2>
         <div className="dv-cert-grid">
-          {CERTS.map((c) => (
+          {content.certifications.map((c) => (
             <div key={c.title} data-rv="" className="dv-cert-card">
               <div className="dv-cert-top">
                 <div className="dv-cert-org">{c.org}</div>
@@ -707,7 +669,7 @@ export default function Portfolio() {
         <div data-rv="" className="dv-eyebrow">[06] SKILLS</div>
         <h2 data-rv="" className="dv-h2 dv-h2-spaced">The <span className="accent">toolkit</span>.</h2>
         <div className="dv-skills-grid">
-          {SKILL_GROUPS.map((g, i) => (
+          {content.skillGroups.map((g, i) => (
             <div key={g.title} data-rv="" className="dv-skill-group">
               <div className="dv-skill-group-head">
                 <span className="accent">{g.title}</span>
@@ -734,18 +696,18 @@ export default function Portfolio() {
         <div className="dv-eyebrow">[07] MUSIC</div>
         <div className="dv-music-head">
           <h2 data-rv="" className="dv-h2">Off the <span className="accent">keyboard</span>.</h2>
-          <p data-rv="" className="dv-music-lead">Music is the other half of what I do. I play, perform, and lead the Fastunes Music Society at RUSL, where we run auditions, events and performances for student musicians.</p>
+          <p data-rv="" className="dv-music-lead">{content.music.lead}</p>
         </div>
         <div className={`dv-music-grid${narrow ? " narrow" : ""}`}>
-          {MUSIC_PHOTOS.map((m) => (
-            <div key={m.id} data-rv="" className="dv-music-tile">
-              <img src={m.src} alt={m.caption} className="dv-music-image" loading="lazy" />
+          {content.music.photos.map((m, i) => (
+            <div key={i} data-rv="" className="dv-music-tile">
+              <img src={m.image} alt={m.caption} className="dv-music-image" loading="lazy" />
               <div className="dv-music-caption">{m.caption}</div>
             </div>
           ))}
         </div>
         <div className="dv-music-highlights">
-          {MUSIC_HIGHLIGHTS.map((x) => (
+          {content.music.highlights.map((x) => (
             <div key={x.title} data-rv="" className="dv-highlight-card">
               <div className="dv-highlight-icon">{x.icon}</div>
               <div className="dv-highlight-title">{x.title}</div>
@@ -770,7 +732,7 @@ export default function Portfolio() {
             <div className="dv-form-hint">Opens your email app with the message ready to send.</div>
           </form>
           <div data-rv="" className="dv-contact-links">
-            {CONTACT_LINKS.map((l) => (
+            {content.contactLinks.map((l) => (
               <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" className="dv-contact-link">
                 <span className="dv-contact-label">{l.label}</span>
                 <span className="dv-contact-value">{l.value}</span>
