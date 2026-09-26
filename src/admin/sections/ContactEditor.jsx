@@ -22,7 +22,7 @@ export default function ContactEditor({ items, onSave }) {
           </>
         )}
       />
-      <button onClick={() => save(draft)}>Save</button>
+      <button className="primary-btn" onClick={() => save(draft)}>Save</button>
       {status && <span className="admin-save-status">{status}</span>}
     </div>
   );

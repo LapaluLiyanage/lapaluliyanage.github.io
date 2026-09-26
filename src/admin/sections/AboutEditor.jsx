@@ -54,7 +54,7 @@ export default function AboutEditor({ about, onSave }) {
           </label>
         </div>
       </div>
-      <button onClick={() => save(draft)}>Save</button>
+      <button className="primary-btn" onClick={() => save(draft)}>Save</button>
       {status && <span className="admin-save-status">{status}</span>}
     </div>
   );

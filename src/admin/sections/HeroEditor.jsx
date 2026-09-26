@@ -66,7 +66,7 @@ export default function HeroEditor({ hero, onSave }) {
           <ImageUpload value={draft.photoUrl} onChange={(url) => set({ photoUrl: url })} pathPrefix="hero" aspect={3 / 4} outW={720} />
         </label>
       </div>
-      <button onClick={() => save(draft)}>Save</button>
+      <button className="primary-btn" onClick={() => save(draft)}>Save</button>
       {status && <span className="admin-save-status">{status}</span>}
     </div>
   );

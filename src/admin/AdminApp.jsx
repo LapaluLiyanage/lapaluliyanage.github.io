@@ -41,8 +41,14 @@ export default function AdminApp() {
   return (
     <div className="admin-shell">
       <header className="admin-header">
-        <span>Signed in as {session.user.email}</span>
-        <button onClick={() => supabase.auth.signOut()}>Sign out</button>
+        <div className="admin-brand">
+          <span className="admin-brand-badge">LL</span>
+          <span className="admin-brand-title">Admin</span>
+        </div>
+        <div className="admin-header-right">
+          <span>{session.user.email}</span>
+          <button onClick={() => supabase.auth.signOut()}>Sign out</button>
+        </div>
       </header>
       <div className="admin-body">
         <nav className="admin-sidebar">
