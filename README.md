@@ -66,6 +66,27 @@ This portfolio is built with a custom **cyberpunk / terminal aesthetic**. No com
 
 ---
 
+## 🔐 Admin panel
+
+Site content (hero copy, about, projects, experience, education, certifications,
+skills, music and contact links) is editable at `/admin.html`, backed by
+Supabase (Postgres + Auth + Storage). GitHub-sourced project stats (stars,
+last pushed) still come live from the GitHub API regardless of what's edited.
+
+Local setup:
+1. Copy `.env.example` to `.env` and fill in `VITE_SUPABASE_URL` /
+   `VITE_SUPABASE_ANON_KEY` from the Supabase project dashboard.
+2. `npm run dev`, visit `/admin.html`, sign in with the owner account
+   (created directly in Supabase → Authentication → Users, not via any
+   public sign-up flow).
+
+The public site (`/`) fetches content from Supabase at runtime and falls
+back to `src/lib/defaultContent.js` if Supabase is unreachable. Deploys
+via GitHub Actions need `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+set as repository secrets (Settings → Secrets and variables → Actions).
+
+---
+
 <div align="center">
   <p><strong>© 2025 LAPALU LIYANAGE · BUILT WITH 🔥 + REACT</strong></p>
   <p>
