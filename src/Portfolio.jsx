@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { DEFAULT_CONTENT } from "./lib/defaultContent";
@@ -154,6 +155,96 @@ function StatCounter({ value }) {
       {target == null ? value : "0" + suffix}
     </div>
   );
+}
+
+// A faint, slow-drifting lime dust field behind the hero only — scoped to
+// the hero's own box (not fixed/full-page), so it scrolls away with it.
+function HeroCanvas() {
+  const mountRef = useRef(null);
+
+  useEffect(() => {
+    const container = mountRef.current;
+    if (!container) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(55, container.clientWidth / container.clientHeight || 1, 0.1, 100);
+    camera.position.z = 12;
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    const accent = new THREE.Color("#c8f542");
+    const N = 480;
+    const positions = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) {
+      const r = 6 + Math.random() * 8;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.6;
+      positions[i * 3 + 2] = r * Math.cos(phi) - 4;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    const material = new THREE.PointsMaterial({ color: accent, size: 0.045, transparent: true, opacity: 0.45, sizeAttenuation: true });
+    const points = new THREE.Points(geo, material);
+    scene.add(points);
+
+    let mx = 0;
+    let my = 0;
+    const onMove = (e) => {
+      const rect = container.getBoundingClientRect();
+      mx = (e.clientX - rect.left) / rect.width - 0.5;
+      my = (e.clientY - rect.top) / rect.height - 0.5;
+    };
+    window.addEventListener("pointermove", onMove);
+
+    const onResize = () => {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      if (!w || !h) return;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    };
+    window.addEventListener("resize", onResize);
+
+    let raf;
+    let dead = false;
+    const clock = new THREE.Clock();
+    const loop = () => {
+      if (dead) return;
+      const t = clock.getElapsedTime();
+      points.rotation.y = t * 0.02;
+      points.rotation.x = Math.sin(t * 0.08) * 0.05;
+      camera.position.x += (mx * 1.2 - camera.position.x) * 0.03;
+      camera.position.y += (-my * 0.8 - camera.position.y) * 0.03;
+      camera.lookAt(0, 0, 0);
+      renderer.render(scene, camera);
+      raf = requestAnimationFrame(loop);
+    };
+
+    if (reduceMotion) {
+      renderer.render(scene, camera);
+    } else {
+      loop();
+    }
+
+    return () => {
+      dead = true;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("resize", onResize);
+      renderer.dispose();
+      geo.dispose();
+      material.dispose();
+      if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement);
+    };
+  }, []);
+
+  return <div ref={mountRef} className="dv-hero-canvas" aria-hidden="true" />;
 }
 
 function useNarrow(bp = 860) {
@@ -414,6 +505,7 @@ export default function Portfolio() {
 
       {/* HERO */}
       <section id="home" data-section="home" className="dv-hero">
+        <HeroCanvas />
         <div className="dv-hero-grid">
           <div className="dv-hero-copy">
             <div data-hf="" className="dv-availability">
