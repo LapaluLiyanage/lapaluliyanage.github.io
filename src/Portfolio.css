@@ -1259,12 +1259,36 @@ body {
 .dv-music-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-auto-rows: 240px;
+  grid-template-rows: repeat(4, 190px);
+  grid-template-areas:
+    "a a b d"
+    "a a c d"
+    "e e f g"
+    "h h h g";
   gap: 14px;
   margin-bottom: 40px;
 }
+/* Collage shape is authored for exactly 8 tiles, by position, not by
+   caption/content -- so it stays correct no matter what photos an editor
+   puts in each slot. Nine-plus tiles simply spill past the hand-placed
+   grid and get auto-placed by the browser; a caption-based mapping would
+   silently break the moment someone renamed a caption. */
+.dv-music-tile:nth-child(1) { grid-area: a; }
+.dv-music-tile:nth-child(2) { grid-area: b; }
+.dv-music-tile:nth-child(3) { grid-area: c; }
+.dv-music-tile:nth-child(4) { grid-area: d; }
+.dv-music-tile:nth-child(5) { grid-area: e; }
+.dv-music-tile:nth-child(6) { grid-area: f; }
+.dv-music-tile:nth-child(7) { grid-area: g; }
+.dv-music-tile:nth-child(8) { grid-area: h; }
 .dv-music-grid.narrow {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  grid-template-rows: none;
+  grid-template-areas: none;
+  grid-auto-rows: 240px;
+}
+.dv-music-grid.narrow .dv-music-tile {
+  grid-area: auto;
 }
 .dv-music-tile {
   position: relative;
