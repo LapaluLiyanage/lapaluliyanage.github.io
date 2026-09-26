@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
 import { DEFAULT_CONTENT } from "./lib/defaultContent";
 import { fetchSiteContent } from "./lib/content";
 import "./Portfolio.css";
@@ -364,6 +365,7 @@ export default function Portfolio() {
   const progressRef = useRef(null);
   const eduLineRef = useRef(null);
   const wordsRef = useRef(null);
+  const lenisRef = useRef(null);
 
   const [content, setContent] = useState(DEFAULT_CONTENT);
   const [filter, setFilter] = useState("All");
@@ -425,6 +427,44 @@ export default function Portfolio() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, showAll]);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const lenis = new Lenis({
+      duration: 1.1,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+    lenisRef.current = lenis;
+    lenis.on("scroll", ScrollTrigger.update);
+
+    const onTick = (time) => lenis.raf(time * 1000);
+    gsap.ticker.add(onTick);
+    gsap.ticker.lagSmoothing(0);
+
+    // Native anchor jumps fight Lenis's own scroll loop, so intercept every
+    // in-page hash link and hand it to Lenis instead of letting the browser
+    // jump the scroll position out from under it.
+    const onAnchorClick = (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const id = a.getAttribute("href");
+      if (!id || id === "#") return;
+      const el = document.querySelector(id);
+      if (!el) return;
+      e.preventDefault();
+      lenis.scrollTo(el);
+    };
+    document.addEventListener("click", onAnchorClick);
+
+    return () => {
+      document.removeEventListener("click", onAnchorClick);
+      gsap.ticker.remove(onTick);
+      lenis.destroy();
+      lenisRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     let removeCursorListener = () => {};

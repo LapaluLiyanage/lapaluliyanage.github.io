@@ -26,11 +26,10 @@ html {
   scrollbar-color: var(--border-2) var(--bg);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
+/* Anchor-link scrolling is handled by Lenis in JS (see Portfolio.jsx) so
+   it can share one scroll loop with GSAP ScrollTrigger instead of fighting
+   a second, native one. Reduced-motion users skip Lenis entirely and fall
+   back to plain native (instant) scrolling. */
 
 body {
   margin: 0;
