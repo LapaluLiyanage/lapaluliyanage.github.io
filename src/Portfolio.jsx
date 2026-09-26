@@ -22,6 +22,7 @@ const NAV_ITEMS = [
   { id: "music", label: "Music", icon: "♪" },
   { id: "contact", label: "Contact", icon: "✉" },
 ];
+const NAV_IDS = NAV_ITEMS.map((n) => n.id);
 
 const ICON_MAP = {
   Java: "java/java-original.svg",
@@ -373,7 +374,7 @@ export default function Portfolio() {
   const [sent, setSent] = useState(false);
 
   const narrow = useNarrow();
-  const active = useActiveSection(NAV_ITEMS.map((n) => n.id));
+  const active = useActiveSection(NAV_IDS);
   const clockRef = useClock("Asia/Colombo");
   const typed = useTyped(TYPE_PHRASES);
   const { profile, repos, status } = useGithub(GITHUB_USER);
