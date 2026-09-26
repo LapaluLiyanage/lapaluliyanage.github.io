@@ -338,23 +338,36 @@ function useGithub(user) {
 function useRevealOnScroll(rootRef, deps) {
   const seen = useRef(new WeakSet());
   useEffect(() => {
+    const root = rootRef.current;
+    const els = root ? Array.from(root.querySelectorAll("[data-rv]")) : [];
+    const unseen = els.filter((el) => !seen.current.has(el));
+    if (!unseen.length) return;
+
+    // Hide immediately, not at the moment each element scrolls into view --
+    // IntersectionObserver callbacks fire a beat after the element is
+    // already visible on screen, so hiding it only then (the old fromTo
+    // pattern) reads as a visible blink: shown, snapped invisible, faded
+    // back in. Pre-hiding right after mount means it's already invisible
+    // well before it's ever scrolled into view.
+    gsap.set(unseen, { y: 44, opacity: 0 });
+
     const io = new IntersectionObserver(
       (entries) =>
         entries.forEach((e) => {
           if (!e.isIntersecting) return;
           io.unobserve(e.target);
-          gsap.fromTo(e.target, { y: 44, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: "power3.out", clearProps: "transform,opacity" });
+          // Marked seen only once actually revealed, not once observation
+          // starts -- otherwise React StrictMode's dev-only double-invoke
+          // (effect runs, cleanup disconnects the observer, effect runs
+          // again) marks elements seen from the first, discarded observer,
+          // so the second (surviving) observer skips them and nothing ever
+          // reveals them.
+          seen.current.add(e.target);
+          gsap.to(e.target, { y: 0, opacity: 1, duration: 0.9, ease: "power3.out", clearProps: "transform,opacity" });
         }),
       { rootMargin: "0px 0px -8% 0px" }
     );
-    const root = rootRef.current;
-    const els = root ? root.querySelectorAll("[data-rv]") : [];
-    els.forEach((el) => {
-      if (!seen.current.has(el)) {
-        seen.current.add(el);
-        io.observe(el);
-      }
-    });
+    unseen.forEach((el) => io.observe(el));
     return () => io.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
