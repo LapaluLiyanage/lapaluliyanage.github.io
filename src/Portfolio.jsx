@@ -505,6 +505,36 @@ export default function Portfolio() {
         gsap.to(eduLineRef.current, { scaleY: 1, ease: "none", scrollTrigger: { trigger: eduLineRef.current, start: "top 80%", end: "bottom 55%", scrub: true } });
       }
 
+      const eduRows = rootRef.current ? rootRef.current.querySelectorAll("[data-edu-item]") : [];
+      eduRows.forEach((row) => {
+        const fromLeft = row.getAttribute("data-edu-side") === "left";
+        const card = row.querySelector("[data-edu-card]");
+        const dot = row.querySelector("[data-edu-dot]");
+        gsap.fromTo(
+          card,
+          { x: fromLeft ? -70 : 70, opacity: 0, rotate: fromLeft ? -3 : 3 },
+          {
+            x: 0,
+            opacity: 1,
+            rotate: 0,
+            duration: 1,
+            ease: "expo.out",
+            scrollTrigger: { trigger: row, start: "top 82%", once: true },
+          }
+        );
+        gsap.fromTo(
+          dot,
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.6,
+            ease: "back.out(3)",
+            scrollTrigger: { trigger: row, start: "top 82%", once: true },
+          }
+        );
+      });
+
       if (cursorRef.current) {
         const xTo = gsap.quickTo(cursorRef.current, "x", { duration: 0.7, ease: "power3" });
         const yTo = gsap.quickTo(cursorRef.current, "y", { duration: 0.7, ease: "power3" });
@@ -830,20 +860,28 @@ export default function Portfolio() {
       <section id="education" data-section="education" className="dv-section">
         <div data-rv="" className="dv-eyebrow">[04] EDUCATION</div>
         <h2 data-rv="" className="dv-h2 dv-h2-spaced">Always <span className="accent">learning</span>.</h2>
-        <div className="dv-timeline">
-          <div className="dv-timeline-rail" />
-          <div ref={eduLineRef} className="dv-timeline-rail-fill" />
-          <div className="dv-timeline-items">
-            {content.education.map((e) => (
-              <div key={e.degree} data-rv="" className="dv-timeline-item">
-                <span className="dv-timeline-dot" />
-                <div className="dv-timeline-meta">
-                  <span>{e.dates}</span>
-                  <span className="accent">{e.status}</span>
+        <div className="dv-edu-track">
+          <div className="dv-edu-rail" />
+          <div ref={eduLineRef} className="dv-edu-rail-fill" />
+          <div className="dv-edu-items">
+            {content.education.map((e, i) => (
+              <div
+                key={e.degree}
+                data-edu-item
+                data-edu-side={i % 2 === 0 ? "left" : "right"}
+                className={`dv-edu-row ${i % 2 === 0 ? "dv-edu-row-left" : "dv-edu-row-right"}`}
+              >
+                <span data-edu-dot className="dv-edu-dot" />
+                <div data-edu-card className="dv-edu-card">
+                  <span className="dv-edu-num">{String(i + 1).padStart(2, "0")}</span>
+                  <div className="dv-edu-meta">
+                    <span>{e.dates}</span>
+                    <span className="accent">{e.status}</span>
+                  </div>
+                  <h3>{e.degree}</h3>
+                  <div className="dv-edu-school">{e.school}</div>
+                  <div className="dv-edu-detail">{e.detail}</div>
                 </div>
-                <h3>{e.degree}</h3>
-                <div className="dv-timeline-school">{e.school}</div>
-                <div className="dv-timeline-detail">{e.detail}</div>
               </div>
             ))}
           </div>

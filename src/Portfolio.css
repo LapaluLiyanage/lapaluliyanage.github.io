@@ -1057,59 +1057,106 @@ body {
   color: var(--accent);
 }
 
-/* EDUCATION TIMELINE */
-.dv-timeline {
+/* EDUCATION TIMELINE (alternating, centered rail) */
+.dv-edu-track {
   position: relative;
-  padding-left: 34px;
-  max-width: 900px;
+  max-width: 980px;
+  margin: 0 auto;
 }
-.dv-timeline-rail {
+.dv-edu-rail {
   position: absolute;
-  left: 6px;
+  left: 50%;
   top: 8px;
   bottom: 8px;
   width: 1px;
   background: var(--border);
+  transform: translateX(-50%);
 }
-.dv-timeline-rail-fill {
+.dv-edu-rail-fill {
   position: absolute;
-  left: 6px;
+  left: 50%;
   top: 8px;
   bottom: 8px;
   width: 1px;
   background: var(--accent);
   box-shadow: 0 0 10px var(--accent);
   transform-origin: top;
-  transform: scaleY(0);
+  transform: translateX(-50%) scaleY(0);
 }
-.dv-timeline-items {
+.dv-edu-items {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 48px;
 }
-.dv-timeline-item {
+.dv-edu-row {
   position: relative;
-  padding: 26px;
-  border-radius: 22px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  transition: border-color 0.3s;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  min-height: 40px;
 }
-.dv-timeline-item:hover {
-  border-color: rgba(200, 245, 66, 0.5);
-}
-.dv-timeline-dot {
+.dv-edu-dot {
   position: absolute;
-  left: -34px;
-  top: 30px;
+  left: 50%;
+  top: 50%;
   width: 13px;
   height: 13px;
   border-radius: 50%;
   background: var(--bg);
   border: 2px solid var(--accent);
   box-shadow: 0 0 12px rgba(200, 245, 66, 0.7);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  z-index: 2;
 }
-.dv-timeline-meta {
+.dv-edu-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 26px;
+  border-radius: 22px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  transition: border-color 0.3s;
+  overflow: hidden;
+}
+.dv-edu-card:hover {
+  border-color: rgba(200, 245, 66, 0.5);
+}
+.dv-edu-row-left {
+  grid-template-columns: 1fr 1fr;
+}
+.dv-edu-row-left .dv-edu-card {
+  grid-column: 1;
+  justify-self: end;
+  margin-right: 32px;
+  text-align: right;
+}
+.dv-edu-row-right .dv-edu-card {
+  grid-column: 2;
+  justify-self: start;
+  margin-left: 32px;
+  text-align: left;
+}
+.dv-edu-num {
+  position: absolute;
+  top: -6px;
+  right: 18px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 52px;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--border);
+  user-select: none;
+  z-index: 0;
+}
+.dv-edu-row-right .dv-edu-num {
+  right: auto;
+  left: 18px;
+}
+.dv-edu-meta {
+  position: relative;
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -1118,22 +1165,32 @@ body {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--fg-mute);
+  z-index: 1;
 }
-.dv-timeline-item h3 {
+.dv-edu-row-left .dv-edu-meta {
+  flex-direction: row-reverse;
+}
+.dv-edu-card h3 {
+  position: relative;
   margin: 0 0 6px 0;
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 22px;
   letter-spacing: -0.02em;
+  z-index: 1;
 }
-.dv-timeline-school {
+.dv-edu-school {
+  position: relative;
   color: var(--fg);
   font-size: 15px;
   margin-bottom: 4px;
+  z-index: 1;
 }
-.dv-timeline-detail {
+.dv-edu-detail {
+  position: relative;
   color: var(--fg-faint);
   font-size: 13.5px;
+  z-index: 1;
 }
 
 /* CERTIFICATIONS */
@@ -1486,6 +1543,42 @@ body {
   }
   .dv-exp-icon {
     display: none;
+  }
+  .dv-edu-rail {
+    left: 6px;
+    transform: none;
+  }
+  .dv-edu-rail-fill {
+    left: 6px;
+    transform: scaleY(0);
+  }
+  .dv-edu-track {
+    padding-left: 26px;
+  }
+  .dv-edu-row,
+  .dv-edu-row-left,
+  .dv-edu-row-right {
+    grid-template-columns: 1fr;
+  }
+  .dv-edu-dot {
+    left: 6px;
+  }
+  .dv-edu-row-left .dv-edu-card,
+  .dv-edu-row-right .dv-edu-card {
+    grid-column: 1;
+    justify-self: stretch;
+    margin-left: 22px;
+    margin-right: 0;
+    max-width: none;
+    text-align: left;
+  }
+  .dv-edu-row-left .dv-edu-meta {
+    flex-direction: row;
+  }
+  .dv-edu-num,
+  .dv-edu-row-right .dv-edu-num {
+    right: 18px;
+    left: auto;
   }
   .dv-footer {
     margin-top: 70px;
