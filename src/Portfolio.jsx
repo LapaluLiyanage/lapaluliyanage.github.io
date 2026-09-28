@@ -417,7 +417,7 @@ export default function Portfolio() {
         num: String(i + 1).padStart(2, "0"),
         meta: r ? `★ ${r.stargazers_count} · ${ago(r.pushed_at)}` : "",
         repoUrl: r ? r.html_url : "https://github.com/LapaluLiyanage",
-        demoUrl: r && r.homepage ? r.homepage : "",
+        demoUrl: f.demoUrl || (r && r.homepage ? r.homepage : ""),
       };
     });
   }, [repos, content.projects]);

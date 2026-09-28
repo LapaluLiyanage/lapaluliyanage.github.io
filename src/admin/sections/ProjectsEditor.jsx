@@ -99,7 +99,7 @@ export default function ProjectsEditor({ items, onSave }) {
       <ListEditor
         items={draft}
         onChange={setDraft}
-        newItem={{ title: "", category: "FULL-STACK", keys: "", image: "", description: "", tech: [] }}
+        newItem={{ title: "", category: "FULL-STACK", keys: "", image: "", demoUrl: "", description: "", tech: [] }}
         itemLabel={(item) => item.title}
         renderFields={(item, update) => (
           <>
@@ -110,6 +110,7 @@ export default function ProjectsEditor({ items, onSave }) {
               ))}
             </select>
             <input placeholder="match GitHub repo (comma separated)" value={item.keys} onChange={(e) => update({ keys: e.target.value })} />
+            <input placeholder="live demo URL (optional, overrides the repo's website)" value={item.demoUrl || ""} onChange={(e) => update({ demoUrl: e.target.value })} />
             <textarea placeholder="description" value={item.description} onChange={(e) => update({ description: e.target.value })} rows={3} />
             <input placeholder="tech, comma separated" value={toCsv(item.tech)} onChange={(e) => update({ tech: fromCsv(e.target.value) })} />
             <ImageUpload value={item.image} onChange={(url) => update({ image: url })} pathPrefix="projects" aspect={3 / 2} outW={900} />
