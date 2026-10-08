@@ -202,6 +202,104 @@ function ProjectModal({ project, onClose }) {
   );
 }
 
+const YEAR_NOW = new Date().getFullYear();
+
+function parseYears(dates) {
+  const m = String(dates || "").match(/(\d{4})\s*[—–-]\s*(\d{4}|present)/i);
+  if (!m) return null;
+  const start = Number(m[1]);
+  const end = /present/i.test(m[2]) ? YEAR_NOW : Number(m[2]);
+  return end >= start ? { start, end } : null;
+}
+
+function EducationExplorer({ items }) {
+  const [sel, setSel] = useState(0);
+  const refs = useRef([]);
+  const spans = items.map((e) => parseYears(e.dates));
+  const valid = spans.filter(Boolean);
+  const min = valid.length ? Math.min(...valid.map((v) => v.start)) : 0;
+  const max = valid.length ? Math.max(...valid.map((v) => v.end)) : 0;
+  const total = Math.max(1, max - min + 1);
+  const years = valid.length ? Array.from({ length: total }, (_, i) => min + i) : [];
+  const cur = items[Math.min(sel, items.length - 1)];
+  if (!cur) return null;
+
+  const onKey = (e) => {
+    const dir = e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : e.key === "ArrowUp" || e.key === "ArrowLeft" ? -1 : 0;
+    if (!dir) return;
+    e.preventDefault();
+    const next = (sel + dir + items.length) % items.length;
+    setSel(next);
+    refs.current[next] && refs.current[next].focus();
+  };
+
+  return (
+    <div data-rv="" className="dv-edu">
+      <div className="dv-edu-list" role="tablist" aria-orientation="vertical" onKeyDown={onKey}>
+        {items.map((e, i) => (
+          <button
+            key={e.degree}
+            ref={(el) => (refs.current[i] = el)}
+            role="tab"
+            id={`edu-tab-${i}`}
+            aria-selected={sel === i}
+            aria-controls="edu-panel"
+            tabIndex={sel === i ? 0 : -1}
+            className={`dv-edu-tab${sel === i ? " on" : ""}`}
+            onClick={() => setSel(i)}
+            onMouseEnter={() => setSel(i)}
+          >
+            <span className="dv-edu-num">{String(i + 1).padStart(2, "0")}</span>
+            <span className="dv-edu-tab-main">
+              <span className="dv-edu-tab-title">{e.degree}</span>
+              <span className="dv-edu-tab-sub">{e.dates}</span>
+            </span>
+            <span className="dv-edu-arrow" aria-hidden="true">→</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="dv-edu-panel" role="tabpanel" id="edu-panel" aria-labelledby={`edu-tab-${sel}`}>
+        <div key={cur.degree} className="dv-edu-panel-in">
+          <div className="dv-edu-status">
+            <span className="dv-edu-dot" />
+            {cur.status}
+          </div>
+          <h3 className="dv-edu-degree">{cur.degree}</h3>
+          <div className="dv-edu-school">{cur.school}</div>
+          <p className="dv-edu-detail">{cur.detail}</p>
+        </div>
+
+        {valid.length > 0 && (
+          <div className="dv-edu-track" aria-hidden="true">
+            <div className="dv-edu-years" style={{ gridTemplateColumns: `repeat(${total}, 1fr)` }}>
+              {years.map((y) => (
+                <span key={y}>{y}</span>
+              ))}
+            </div>
+            <div className="dv-edu-bars">
+              {items.map((e, i) =>
+                spans[i] ? (
+                  <button
+                    key={e.degree}
+                    tabIndex={-1}
+                    className={`dv-edu-bar${sel === i ? " on" : ""}`}
+                    style={{
+                      left: `${((spans[i].start - min) / total) * 100}%`,
+                      width: `${((spans[i].end - spans[i].start + 1) / total) * 100}%`,
+                    }}
+                    onClick={() => setSel(i)}
+                  />
+                ) : null
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function GithubMark(props) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15" {...props}>
@@ -497,7 +595,6 @@ export default function Portfolio() {
   const rootRef = useRef(null);
   const cursorRef = useRef(null);
   const progressRef = useRef(null);
-  const eduLineRef = useRef(null);
   const wordsRef = useRef(null);
   const lenisRef = useRef(null);
 
@@ -622,9 +719,6 @@ export default function Portfolio() {
 
       if (progressRef.current) {
         gsap.to(progressRef.current, { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
-      }
-      if (eduLineRef.current) {
-        gsap.to(eduLineRef.current, { scaleY: 1, ease: "none", scrollTrigger: { trigger: eduLineRef.current, start: "top 80%", end: "bottom 55%", scrub: true } });
       }
 
       if (cursorRef.current) {
@@ -971,24 +1065,7 @@ export default function Portfolio() {
       <section id="education" data-section="education" className="dv-section">
         <div data-rv="" className="dv-eyebrow">[04] EDUCATION</div>
         <h2 data-rv="" className="dv-h2 dv-h2-spaced">Always <span className="accent">learning</span>.</h2>
-        <div className="dv-timeline">
-          <div className="dv-timeline-rail" />
-          <div ref={eduLineRef} className="dv-timeline-rail-fill" />
-          <div className="dv-timeline-items">
-            {content.education.map((e) => (
-              <div key={e.degree} data-rv="" className="dv-timeline-item">
-                <span className="dv-timeline-dot" />
-                <div className="dv-timeline-meta">
-                  <span>{e.dates}</span>
-                  <span className="accent">{e.status}</span>
-                </div>
-                <h3>{e.degree}</h3>
-                <div className="dv-timeline-school">{e.school}</div>
-                <div className="dv-timeline-detail">{e.detail}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <EducationExplorer items={content.education} />
       </section>
 
       {/* CERTIFICATIONS */}
