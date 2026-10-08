@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { DEFAULT_CONTENT } from "./lib/defaultContent";
 import { fetchSiteContent } from "./lib/content";
+import { PROJECT_DETAILS } from "./lib/projectDetails";
 import "./Portfolio.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -52,6 +53,15 @@ const ICON_MAP = {
   NumPy: "numpy/numpy-original.svg",
   Pandas: ["pandas/pandas-original.svg", true],
   pgAdmin: "postgresql/postgresql-original.svg",
+  "Java 21": "java/java-original.svg",
+  "Spring Boot 3": "spring/spring-original.svg",
+  "Android MVVM": "android/android-original.svg",
+  Room: "android/android-original.svg",
+  SciPy: "scipy/scipy-original.svg",
+  Streamlit: "streamlit/streamlit-original.svg",
+  "Manifest V3": "chrome/chrome-original.svg",
+  Node: "nodejs/nodejs-original.svg",
+  Gemini: "google/google-original.svg",
 };
 
 function skillIcon(name) {
@@ -81,6 +91,114 @@ const ago = (d) => {
   const x = Math.floor((Date.now() - new Date(d)) / 864e5);
   return x < 1 ? "today" : x < 30 ? x + "d" : x < 365 ? Math.floor(x / 30) + "mo" : Math.floor(x / 365) + "y";
 };
+
+function TechLogo({ name }) {
+  const [failed, setFailed] = useState(false);
+  const icon = skillIcon(name);
+  if (!icon || failed) {
+    return <span className="dv-modal-logo mono">{name.slice(0, 2).toUpperCase()}</span>;
+  }
+  return (
+    <span className="dv-modal-logo">
+      <img
+        src={icon.src}
+        alt=""
+        loading="lazy"
+        className={icon.invert ? "invert" : ""}
+        onError={() => setFailed(true)}
+      />
+    </span>
+  );
+}
+
+function ProjectModal({ project, onClose }) {
+  const closeRef = useRef(null);
+  const details = PROJECT_DETAILS[project.title];
+  const stack = details ? details.stack : project.tech.map((t) => [t, ""]);
+
+  useEffect(() => {
+    const prevFocus = document.activeElement;
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    closeRef.current && closeRef.current.focus();
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      prevFocus && prevFocus.focus && prevFocus.focus();
+    };
+  }, [onClose]);
+
+  return (
+    <div className="dv-modal-backdrop" onClick={onClose} data-lenis-prevent="">
+      <div
+        className="dv-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label={project.title}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button ref={closeRef} className="dv-modal-close" onClick={onClose} aria-label="Close project details">
+          ✕
+        </button>
+        <div className="dv-modal-hero">
+          <div className="dv-project-placeholder">
+            <span>{project.title.slice(0, 2).toUpperCase()}</span>
+          </div>
+          <img
+            src={project.image}
+            alt={project.title}
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
+          <div className="dv-project-cat">{project.category}</div>
+        </div>
+        <div className="dv-modal-body">
+          <div className="dv-eyebrow">PROJECT {project.num}</div>
+          <h3 className="dv-modal-title">{project.title}</h3>
+          {details && <p className="dv-modal-tagline">{details.tagline}</p>}
+          <p className="dv-modal-text">{details ? details.overview : project.description}</p>
+
+          {details && (
+            <>
+              <h4 className="dv-modal-h">Key features</h4>
+              <ul className="dv-modal-list">
+                {details.features.map((f) => (
+                  <li key={f}>{f}</li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          <h4 className="dv-modal-h">Tech stack</h4>
+          <div className="dv-modal-stack">
+            {stack.map(([name, role]) => (
+              <div key={name} className="dv-modal-tech">
+                <TechLogo name={name} />
+                <div>
+                  <div className="dv-modal-tech-name">{name}</div>
+                  {role && <div className="dv-modal-tech-role">{role}</div>}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="dv-project-actions">
+            <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="dv-btn-outline sm">
+              View Project ↗
+            </a>
+            {project.demoUrl && (
+              <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="dv-btn-solid sm">
+                Live Demo
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function GithubMark(props) {
   return (
@@ -385,6 +503,8 @@ export default function Portfolio() {
   const [filter, setFilter] = useState("All");
   const [showAll, setShowAll] = useState(false);
   const [sent, setSent] = useState(false);
+  const [openProject, setOpenProject] = useState(null);
+  const closeProject = useCallback(() => setOpenProject(null), []);
 
   const narrow = useNarrow();
   const active = useActiveSection(NAV_IDS);
@@ -750,7 +870,24 @@ export default function Portfolio() {
 
         <div className="dv-projects-grid">
           {visibleProjects.map((p) => (
-            <article key={p.title} data-card="" className="dv-project-card">
+            <article
+              key={p.title}
+              data-card=""
+              className="dv-project-card clickable"
+              tabIndex={0}
+              role="button"
+              aria-label={`Open details for ${p.title}`}
+              onClick={(e) => {
+                if (e.target.closest("a")) return;
+                setOpenProject(p);
+              }}
+              onKeyDown={(e) => {
+                if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+                  e.preventDefault();
+                  setOpenProject(p);
+                }
+              }}
+            >
               <div className="dv-project-media">
                 <img
                   src={p.image}
@@ -797,6 +934,8 @@ export default function Portfolio() {
             </button>
           </div>
         )}
+
+        {openProject && <ProjectModal project={openProject} onClose={closeProject} />}
       </section>
 
       {/* EXPERIENCE */}
