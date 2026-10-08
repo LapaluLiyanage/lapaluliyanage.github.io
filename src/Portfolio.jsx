@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { createPortal } from "react-dom";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -129,7 +130,7 @@ function ProjectModal({ project, onClose }) {
     };
   }, [onClose]);
 
-  return (
+  return createPortal(
     <div className="dv-modal-backdrop" onClick={onClose} data-lenis-prevent="">
       <div
         className="dv-modal"
@@ -196,7 +197,8 @@ function ProjectModal({ project, onClose }) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
