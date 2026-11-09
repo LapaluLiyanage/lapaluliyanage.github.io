@@ -1,6 +1,6 @@
 # Design brief: Project detail view (portfolio)
 
-Paste this whole file into Claude Design to generate the project detail screen.
+Use this file as the brief for the the project detail screen.
 
 ## Goal
 When a visitor clicks a project card in the "Selected Work" grid, show a full project page/modal with the long description, key features, and the tech stack **with logos**. It must feel like the rest of the site: dark, editorial, lime accent.

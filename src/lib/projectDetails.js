@@ -93,6 +93,26 @@ export const PROJECT_DETAILS = {
       ["Streamlit", "Interactive planner UI"],
     ],
   },
+  SLYHS: {
+    tagline: "Website for Sri Lanka's young herpetologists",
+    overview:
+      "The website for the Sri Lankan Young Herpetologists' Society, a group for young people who want to study, protect and share Sri Lanka's snakes, reptiles and amphibians. It combines an animated, scroll-driven front end with a Supabase back end and an admin panel the society can run itself.",
+    features: [
+      "Animated hero with a 3D serpent that follows the scroll",
+      "Filterable species guide, one page per endemic species, and a snakebite first-aid guide",
+      "Four-step membership registration saved to the database",
+      "Available in Sinhala, Tamil and English",
+      "Admin panel for events, animals, blog posts, policies, members and subscribers",
+    ],
+    stack: [
+      ["React 18", "Component-based front end with React Router"],
+      ["Vite", "Build tooling and dev server"],
+      ["GSAP", "Scroll animation, with Lenis smooth scrolling"],
+      ["three.js", "3D serpent via react-three-fiber"],
+      ["Supabase", "Postgres, Auth and Edge Functions"],
+      ["Vercel", "Hosting"],
+    ],
+  },
   ChordScope: {
     tagline: "Advanced chord detection for YouTube songs",
     overview:

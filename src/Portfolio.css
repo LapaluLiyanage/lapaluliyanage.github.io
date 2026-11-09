@@ -242,7 +242,7 @@ body {
   z-index: 2;
   min-height: 100vh;
   box-sizing: border-box;
-  padding: 128px 6vw 0;
+  padding: 104px 6vw 0;
   display: flex;
   flex-direction: column;
   max-width: 1760px;
@@ -280,7 +280,7 @@ body {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--fg-mute);
-  margin-bottom: 30px;
+  margin-bottom: 22px;
 }
 
 .dv-pulse-dot {
@@ -299,10 +299,10 @@ body {
 }
 
 .dv-h1 {
-  margin: 0 0 30px 0;
+  margin: 0 0 24px 0;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(40px, 6.6vw, 104px);
+  font-size: clamp(40px, min(5.6vw, 9.5vh), 96px);
   line-height: 0.94;
   letter-spacing: -0.045em;
 }
@@ -329,7 +329,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .dv-btn-solid,
@@ -403,7 +403,8 @@ body {
 }
 .dv-photo-stage {
   position: relative;
-  width: min(100%, 420px);
+  width: min(100%, 420px, calc((100vh - 300px) * 0.75));
+  min-width: 260px;
   aspect-ratio: 3 / 4;
 }
 .dv-photo-grid {
@@ -525,7 +526,7 @@ body {
 }
 
 .dv-hero-footer {
-  margin-top: 48px;
+  margin-top: 24px;
   border-top: 1px solid var(--border);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -1805,7 +1806,7 @@ body {
     padding: 90px 5vw;
   }
   .dv-hero {
-    padding-top: 108px;
+    padding-top: 92px;
   }
   .dv-terminal {
     display: none;

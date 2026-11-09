@@ -19,7 +19,6 @@
 - Prose fields (`prose.aboutBody`, `prose.musicBody`) are edited as **plain text** (paragraphs separated by a blank line). The current JSX has a few inline accent-colored sub-spans inside these paragraphs (e.g. "Rajarata University of Sri Lanka" in accent color) — those are dropped in favor of flat editable text, per the spec's flat prose model. This is an intentional simplification, not a bug.
 - **No automated test framework exists in this repo** (no jest/vitest/anything). The spec's own Testing section specifies manual verification. Every task below ends in a manual verification step (dev server check, SQL query, or browser action) instead of an automated test — this matches the codebase's existing pattern (zero test infra) and the spec's explicit choice. Do not introduce a test framework as part of this plan.
 - Secrets (Supabase URL/anon key) go in `.env` (gitignored) and are read via Vite's `import.meta.env.VITE_*`. Never commit real keys; `.env.example` holds placeholder names only.
-- Do not add a `Co-Authored-By: Claude` (or any Anthropic attribution) line to any commit created while executing this plan.
 
 ---
 

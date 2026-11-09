@@ -758,8 +758,6 @@ export default function Portfolio() {
       <div ref={cursorRef} className="dv-cursor" aria-hidden="true" />
       <div ref={progressRef} className="dv-progress" aria-hidden="true" />
 
-      <a href="#home" className="dv-badge" aria-label="Back to top">LL</a>
-
       <nav className={`dv-nav${narrow ? " narrow" : ""}`}>
         {NAV_ITEMS.map((n) => {
           const on = active === n.id;

@@ -21,6 +21,10 @@
 
 ---
 
+<div align="center">
+  <img src="docs/screenshots/home.jpg" alt="Portfolio home page" width="900" />
+</div>
+
 ## 🚀 The Aesthetic
 
 This portfolio is built with a custom **cyberpunk / terminal aesthetic**. No component libraries were used — every animation, gradient, and layout is crafted with pure CSS to reflect a unique developer identity.
