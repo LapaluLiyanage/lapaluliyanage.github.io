@@ -18,7 +18,7 @@ export const DEFAULT_ALBUMS = [
     organiser: "Arts Committee, Students' Union, Rajarata University of Sri Lanka",
     description: "A Poson evening of songs outdoors, playing acoustic guitar with a seated ensemble.",
     credit: IN_FOCUS,
-    photos: photos("poson-2026", 1),
+    photos: photos("poson-sandai-2026", 1),
   },
   {
     title: "Build with AI 2026: RUSL Buildathon",

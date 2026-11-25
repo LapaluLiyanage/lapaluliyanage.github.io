@@ -97,7 +97,7 @@ export const DEFAULT_PROJECTS = [
     keys: "chordariumhub",
     title: "Chordarium Hub",
     category: "FULL-STACK",
-    image: "/projects/chordarium-hub-cover.jpg",
+    image: "/projects/chordarium-hub-card.jpg",
     demoUrl: "https://chordarium.lapalu.me",
     repoUrl: GH + "Chordarium-HUB",
     description: "A music lab for people who play: an interactive chord ring, live music news and articles, and the Studio VST plugin in development.",
