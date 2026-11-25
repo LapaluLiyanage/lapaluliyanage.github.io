@@ -260,3 +260,8 @@ button.mg-tile {
 button.mg-tile::after {
   display: none;
 }
+
+/* space before the highlight cards, in both views */
+.mg {
+  margin-bottom: 40px;
+}
