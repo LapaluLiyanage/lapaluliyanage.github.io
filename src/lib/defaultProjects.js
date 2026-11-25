@@ -94,40 +94,75 @@ export const DEFAULT_PROJECTS = [
     screenshots: shots("full-frame", ["Website", "Store artwork"]),
   },
   {
-    keys: "chordarium",
+    keys: "chordariumhub",
     title: "Chordarium Hub",
     category: "FULL-STACK",
-    image: "/projects/chordarium-cover.jpg",
+    image: "/projects/chordarium-hub-cover.jpg",
     demoUrl: "https://chordarium.lapalu.me",
     repoUrl: GH + "Chordarium-HUB",
-    description: "Chord tools for people who play: Chorder, an interactive chord ring, live music news and articles, with Songbooks and Studio still to come.",
-    tech: ["React", "TypeScript", "three.js", "Flask", "Python"],
-    tagline: "Chord tools for people who play",
-    overview: "Chordarium is a music lab of tools for people who play. The hub site introduces the tools and hosts the Chordarium Ring, music news and articles.\n\nCHORDARIUM CHORDER\nPaste a YouTube link or upload an audio file and get its chords in time with the music. A Flask API takes the request and a separate worker runs the analysis pipeline:\n1. Audio: yt-dlp and ffmpeg turn the link or file into mono 22.05 kHz WAV, up to 15 minutes.\n2. Stems (Accurate mode): Demucs separates vocals, drums, bass and the rest, so chords are read without drums and vocals.\n3. Beats: beat_this finds beats and downbeats, and tempo is taken from the median beat gap.\n4. Chords: a pretrained bi-directional transformer (BTC) reads a constant-Q transform. If its weights are missing, a 144-template chroma matcher with Viterbi smoothing takes over.\n5. Clean-up: chord changes are snapped to beats and repeats are merged.\n6. Bass: the strongest bass note turns a chord into a slash chord when it belongs to that chord.\n7. Key: Krumhansl-Schmuckler key estimation.\n8. Sections: SongFormer labels intro, verse, chorus and bridge in Accurate mode, with a repetition-based method otherwise.\nThe models are pretrained open-source models; my work is the pipeline around them and the app.\n\nCHORDARIUM RING\nA 3D ring of the twelve notes. Drag to turn it, tap a note to build its chord, or choose a chord to see its notes and hear it through the Web Audio API. It can play through chords on its own, and falls back to a flat SVG ring without WebGL.\n\nMUSIC NEWS\nA serverless function reads RSS feeds for six regions (World, Sri Lanka, India, UK, USA and Japan) from sources such as Billboard, The Guardian and Google News. It keeps the last seven days, removes duplicates and sorts by date. If one feed fails, the others still load. Readers can filter by region and section, search and sort.\n\nARTICLES\nShort reads on theory, guitar, Sinhala music, band life and ear training. Each topic's summary, image and link come from the Wikipedia REST API, cached for six hours and credited under CC BY-SA.\n\nSONGBOOKS AND STUDIO\nSongbooks, Sinhala songs with their chords organised for a band to play from, is in progress. Studio, which turns a chord sheet and a plain-language brief into MIDI inside a DAW, is not released yet.",
+    description: "A music lab for people who play: an interactive chord ring, live music news and articles, and the Studio VST plugin in development.",
+    tech: ["React", "TypeScript", "three.js", "Vercel"],
+    tagline: "The home of the Chordarium tools",
+    overview: "Chordarium is a music lab of tools for people who play. The hub site introduces the tools and hosts the Chordarium Ring, music news and articles.\n\nCHORDARIUM CHORDER\nTurns a YouTube link or audio file into synced chords. It has its own project page, linked below.\n\nCHORDARIUM RING\nA 3D ring of the twelve notes. Drag to turn it, tap a note to build its chord, or choose a chord to see its notes and hear it through the Web Audio API. It can play through chords on its own, and falls back to a flat SVG ring without WebGL.\n\nCHORDARIUM STUDIO (VST3 PLUGIN, IN DEVELOPMENT)\nA VST is a plugin that runs inside music production software such as Cubase. Studio takes a chord sheet, in Sinhala or English, and a plain-language request such as \"soft piano with bass and light drums\", and creates MIDI parts for piano, bass, pad and drums. The AI only plans the arrangement; fixed rules write the notes. You can use your own AI service, or none at all.\n\nMUSIC NEWS\nA serverless function reads RSS feeds for six regions (World, Sri Lanka, India, UK, USA and Japan) from sources such as Billboard, The Guardian and Google News. It keeps the last seven days, removes duplicates and sorts by date. If one feed fails, the others still load. Readers can filter by region and section, search and sort.\n\nARTICLES\nShort reads on theory, guitar, Sinhala music, band life and ear training. Each topic's summary, image and link come from the Wikipedia REST API, cached for six hours and credited under CC BY-SA.\n\nSONGBOOKS\nSinhala songs with their chords, organised for a band to play from. In progress.",
     features: [
-      "Chorder: chords from a YouTube link or audio file, including 7ths, sus chords, inversions and slash chords",
-      "Chorder: Fast and Accurate analysis modes",
-      "Chorder: loop, slow down and edit chords and song sections",
-      "Chorder: export to ChordPro, PDF, TXT, MIDI and JSON",
       "Chordarium Ring: interactive 3D chord circle with sound",
       "Music News from six regions, refreshed from RSS feeds",
       "Articles with Wikipedia summaries, tags and search",
-      "Songbooks (in progress) and Studio (not released yet)",
+      "Studio (in development): VST3 plugin that turns a chord sheet into MIDI parts",
+      "Songbooks (in progress)",
     ],
     stack: stack([
-      ["React", "Hub and Chorder front ends"],
+      ["React", "Hub front end"],
       ["TypeScript", "Application code"],
       ["three.js", "Chordarium Ring and hero visuals"],
-      ["Flask", "Chorder API, with a separate worker"],
+      ["Vercel", "Hosting and serverless news and article APIs"],
+      ["C++", "Studio VST3 plugin"],
+      ["JUCE", "Studio plugin framework"],
+      ["Python", "Studio arrangement engine and local service"],
+    ]),
+    screenshots: [
+      { image: "/projects/chordarium/1.jpg", caption: "Hub home" },
+      { image: "/projects/chordarium/4.jpg", caption: "The tools" },
+      { image: "/projects/chordarium/5.jpg", caption: "Chordarium Ring" },
+      { image: "/projects/chordarium/6.jpg", caption: "Music News" },
+      { image: "/projects/chordarium/7.jpg", caption: "Articles" },
+    ],
+    related: ["Chordarium Chorder", "Setsmith"],
+  },
+  {
+    keys: "chordariumchorder",
+    title: "Chordarium Chorder",
+    category: "FULL-STACK",
+    image: "/projects/chordarium-cover.jpg",
+    demoUrl: "https://chordariumchorder.lapalu.me",
+    repoUrl: GH + "Chordarium-Chorder",
+    description: "Turns a YouTube link or audio file into synced chords, with 7ths, sus chords and inversions, practice tools and chord-sheet export.",
+    tech: ["Python", "Flask", "React", "PostgreSQL"],
+    tagline: "A song to synced chords",
+    overview: "Paste a YouTube link or upload an audio file and get its chords in time with the music, including 7ths, extensions, sus chords, inversions and slash chords. Chords can be edited by hand and exported as a chord sheet.\n\nTHE ANALYSIS PIPELINE\nA Flask API takes the request and a separate worker runs these steps:\n1. Audio: yt-dlp and ffmpeg turn the link or file into mono 22.05 kHz WAV, up to 15 minutes.\n2. Stems (Accurate mode): Demucs separates vocals, drums, bass and the rest, so chords are read without drums and vocals.\n3. Beats: beat_this finds beats and downbeats, and tempo is taken from the median beat gap.\n4. Chords: a pretrained bi-directional transformer (BTC) reads a constant-Q transform. If its weights are missing, a 144-template chroma matcher with Viterbi smoothing takes over.\n5. Clean-up: chord changes are snapped to beats and repeats are merged.\n6. Bass: the strongest bass note turns a chord into a slash chord when it belongs to that chord.\n7. Key: Krumhansl-Schmuckler key estimation.\n8. Sections: SongFormer labels intro, verse, chorus and bridge in Accurate mode, with a repetition-based method otherwise.\n\nThe models are pretrained open-source models; my work is the pipeline around them and the app.",
+    features: [
+      "Chords from a YouTube link or an uploaded audio file",
+      "Fast and Accurate analysis modes",
+      "Synced tracker with the current chord, sections and beat ruler",
+      "Loop a section, slow it down and follow the chord wheel",
+      "Edit chords and song sections by hand",
+      "Export to ChordPro, PDF, TXT, MIDI and JSON",
+    ],
+    stack: stack([
       ["Python", "Analysis pipeline"],
+      ["Flask", "API, with a separate worker"],
       ["Demucs", "Stem separation"],
       ["beat_this", "Beat and downbeat tracking"],
       ["BTC transformer", "Chord recognition"],
       ["librosa", "Audio features, bass and key"],
+      ["React", "Tracker and editor"],
       ["PostgreSQL", "Songs and analysis jobs"],
-      ["Vercel", "Hub hosting and serverless news and article APIs"],
     ]),
-    screenshots: shots("chordarium", ["Hub home", "Chorder", "Chorder tracker", "The tools", "Chordarium Ring", "Music News", "Articles"]),
+    screenshots: [
+      { image: "/projects/chordarium/2.jpg", caption: "Home" },
+      { image: "/projects/chordarium/3.jpg", caption: "Chord tracker" },
+    ],
+    related: ["Chordarium Hub"],
   },
   {
     keys: "parking",
@@ -521,12 +556,15 @@ export function mergeWithDefaults(saved) {
   }
   const merged = DEFAULT_PROJECTS.map((p) => {
     if (current.has(p.title)) return current.get(p.title);
-    const old = replaced.get(p.title);
-    if (!old) return p;
-    const longText = old.description?.length > CARD_LIMIT ? `
-
-${old.description}` : "";
-    return { ...p, image: old.image || p.image, overview: p.overview + longText };
+    // an old single "Chordarium" entry was the chord finder, so its cover goes to Chorder
+    const old = p.title === "Chordarium Chorder" && replaced.get("Chordarium Hub");
+    return old?.image ? { ...p, image: old.image } : p;
   });
   return [...merged, ...custom];
+}
+
+// Related projects for one title. A link set on either side counts for both.
+export function relatedTo(title, projects) {
+  const own = projects.find((p) => p.title === title)?.related || [];
+  return projects.filter((p) => p.title !== title && (own.includes(p.title) || p.related?.includes(title)));
 }

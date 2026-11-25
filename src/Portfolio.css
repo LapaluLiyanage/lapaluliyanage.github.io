@@ -1894,3 +1894,51 @@ body {
 .dv-modal-text {
   white-space: pre-line;
 }
+
+/* Related projects */
+.dv-project-related {
+  margin: 0 0 12px;
+  font-size: 11px;
+  color: #c8f542;
+}
+.dv-related {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 10px;
+}
+.dv-related-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+}
+.dv-related-card:hover,
+.dv-related-card:focus-visible {
+  border-color: #c8f542;
+}
+.dv-related-card img {
+  flex: none;
+  width: 84px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.dv-related-title,
+.dv-related-text {
+  display: block;
+}
+.dv-related-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.dv-related-text {
+  font-size: 12px;
+  opacity: 0.65;
+}

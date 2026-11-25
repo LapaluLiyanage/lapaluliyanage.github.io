@@ -40,7 +40,8 @@ function ShuffleGrid({ pool, onOpen, frozen }) {
   const [tiles, setTiles] = useState(initial);
   const [playing, setPlaying] = useState(() => !prefersReducedMotion());
   const [visible, setVisible] = useState(false);
-  const [hover, setHover] = useState(false);
+  // the tile under a mouse pointer holds still; the others keep changing
+  const hovered = useRef(-1);
   const gridRef = useRef(null);
   const queue = useRef([]);
   const lastSlot = useRef(-1);
@@ -113,16 +114,17 @@ function ShuffleGrid({ pool, onOpen, frozen }) {
   const canShuffle = pool.length > count;
 
   useEffect(() => {
-    if (!playing || !visible || hover || frozen || !canShuffle) return;
+    if (!playing || !visible || frozen || !canShuffle) return;
     const id = setInterval(() => {
       if (document.hidden) return;
       let slot = Math.floor(Math.random() * count);
       if (slot === lastSlot.current) slot = (slot + 1) % count;
+      if (slot === hovered.current) slot = (slot + 1) % count;
       lastSlot.current = slot;
       flip(slot);
     }, INTERVAL);
     return () => clearInterval(id);
-  }, [playing, visible, hover, frozen, canShuffle, count, flip]);
+  }, [playing, visible, frozen, canShuffle, count, flip]);
 
   // Every tile flips in turn, like a wave running across the grid.
   const shuffleAll = () => {
@@ -143,7 +145,7 @@ function ShuffleGrid({ pool, onOpen, frozen }) {
           </button>
         </div>
       )}
-      <div ref={gridRef} className="mg-grid" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+      <div ref={gridRef} className="mg-grid">
         {Array.from({ length: Math.ceil(tiles.length / 2) }, (_, column) => (
           <div key={column} className="mg-column">
             {tiles.slice(column * 2, column * 2 + 2).map((t, n) => {
@@ -155,6 +157,8 @@ function ShuffleGrid({ pool, onOpen, frozen }) {
                   key={i}
                   className={`dv-music-tile mg-tile ${isTall(i) ? "tall" : "wide"}`}
                   onClick={() => onOpen(current)}
+                  onPointerEnter={(e) => e.pointerType === "mouse" && (hovered.current = i)}
+                  onPointerLeave={() => (hovered.current = -1)}
                   aria-label={`Open ${current.label || "photo"}`}
                 >
                   <span className={`mg-flipper ${i % 3 === 1 ? "x" : "y"}`} style={{ "--turn": `${t.turn * 180}deg` }}>

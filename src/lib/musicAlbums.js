@@ -12,6 +12,15 @@ const photos = (folder, count, small = []) =>
 
 export const DEFAULT_ALBUMS = [
   {
+    title: "Poson Sandai Sarasaviyai",
+    nativeName: "පොසොන් සඳයි සරසවියයි",
+    date: "2026",
+    organiser: "Arts Committee, Students' Union, Rajarata University of Sri Lanka",
+    description: "A Poson evening of songs outdoors, playing acoustic guitar with a seated ensemble.",
+    credit: IN_FOCUS,
+    photos: photos("poson-2026", 1),
+  },
+  {
     title: "Build with AI 2026: RUSL Buildathon",
     nativeName: "",
     date: "2026",

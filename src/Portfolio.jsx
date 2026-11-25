@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { DEFAULT_CONTENT } from "./lib/defaultContent";
 import { fetchSiteContent } from "./lib/content";
-import { withDefaults } from "./lib/defaultProjects";
+import { withDefaults, relatedTo } from "./lib/defaultProjects";
 import { DEFAULT_ALBUMS } from "./lib/musicAlbums";
 import MusicGallery from "./components/MusicGallery.jsx";
 import "./Portfolio.css";
@@ -93,7 +93,7 @@ const GLYPHS = {
   box: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM4 7.5l8 4.5 8-4.5M12 12v9",
   code: "M8 8l-5 4 5 4M16 8l5 4-5 4M14 5l-4 14",
 };
-const GLYPH_FOR = { "pdf-lib": "doc", librosa: "wave", beat_this: "wave", "BTC transformer": "wave", Testcontainers: "box", OOP: "box" };
+const GLYPH_FOR = { "pdf-lib": "doc", librosa: "wave", beat_this: "wave", "BTC transformer": "wave", JUCE: "wave", Testcontainers: "box", OOP: "box" };
 
 function skillIcon(name) {
   const v = ICON_MAP[name];
@@ -179,7 +179,7 @@ function ProjectGallery({ title, shots, active, onSelect }) {
   );
 }
 
-function ProjectModal({ project, onClose }) {
+function ProjectModal({ project, related, onOpen, onClose }) {
   const closeRef = useRef(null);
   const [shot, setShot] = useState(null);
   const shots = (project.screenshots || []).filter((s) => s.image);
@@ -265,6 +265,23 @@ function ProjectModal({ project, onClose }) {
               </div>
             ))}
           </div>
+
+          {related.length > 0 && (
+            <>
+              <h4 className="dv-modal-h">Related projects</h4>
+              <div className="dv-related">
+                {related.map((r) => (
+                  <button key={r.title} type="button" className="dv-related-card" onClick={() => onOpen(r)}>
+                    <img src={r.image} alt="" loading="lazy" />
+                    <span>
+                      <span className="dv-related-title">{r.title} →</span>
+                      <span className="dv-related-text">{r.tagline || r.category}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
 
           <div className="dv-project-actions">
             {project.repoUrl && (
@@ -1088,6 +1105,9 @@ export default function Portfolio() {
                   {p.meta && <span className="dv-project-meta">{p.meta}</span>}
                 </div>
                 <p className="dv-project-desc">{p.description}</p>
+                {relatedTo(p.title, featured).length > 0 && (
+                  <p className="dv-project-related mono">Related: {relatedTo(p.title, featured).map((r) => r.title).join(" · ")}</p>
+                )}
                 <div className="dv-tech-row">
                   {p.tech.map((t) => (
                     <span key={t} className="dv-tech-chip">{t}</span>
@@ -1116,7 +1136,10 @@ export default function Portfolio() {
           </div>
         )}
 
-        {openProject && <ProjectModal project={openProject} onClose={closeProject} />}
+        {openProject && (
+          // keyed so that opening a related project starts again at the top
+          <ProjectModal key={openProject.title} project={openProject} related={relatedTo(openProject.title, featured)} onOpen={setOpenProject} onClose={closeProject} />
+        )}
       </section>
 
       {/* EXPERIENCE */}

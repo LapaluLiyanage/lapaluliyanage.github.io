@@ -4,7 +4,7 @@ import ImageUpload from "../components/ImageUpload.jsx";
 import { toCsv, fromCsv } from "../csv.js";
 import { useSectionSave } from "../useSectionSave.js";
 import ScreenshotsEditor from "../components/ScreenshotsEditor.jsx";
-import { mergeWithDefaults, withDefaults } from "../../lib/defaultProjects.js";
+import { mergeWithDefaults, withDefaults, relatedTo } from "../../lib/defaultProjects.js";
 
 const GITHUB_USER = "LapaluLiyanage";
 const CATEGORIES = ["FULL-STACK", "BACKEND", "AI-ML", "MOBILE", "TOOLS"];
@@ -70,6 +70,28 @@ export default function ProjectsEditor({ items, onSave }) {
 
   const usedKeys = new Set(draft.flatMap((p) => p.keys.split(",").map((k) => k.trim().toLowerCase())));
   const importableRepos = repos.filter((r) => !usedKeys.has(r.name.toLowerCase()));
+
+  function toggleRelated(title, other, on) {
+    setDraft((list) =>
+      list.map((p) => {
+        const partner = p.title === title ? other : p.title === other ? title : null;
+        if (!partner) return p;
+        const rest = (p.related || []).filter((t) => t !== partner);
+        return { ...p, related: on ? [...rest, partner] : rest };
+      })
+    );
+  }
+
+  // Renaming a project keeps the links that point to it.
+  function renameProject(from, to) {
+    setDraft((list) =>
+      list.map((p) => ({
+        ...p,
+        title: p.title === from ? to : p.title,
+        related: (p.related || []).map((t) => (t === from ? to : t)),
+      }))
+    );
+  }
 
   function importFromGithub() {
     const repo = repos.find((r) => r.name === selectedRepo);
@@ -138,7 +160,7 @@ export default function ProjectsEditor({ items, onSave }) {
         itemLabel={(item) => (item.hidden ? `${item.title} (hidden)` : item.title)}
         renderFields={(item, update) => (
           <>
-            <input placeholder="title" value={item.title} onChange={(e) => update({ title: e.target.value })} />
+            <input placeholder="title" value={item.title} onChange={(e) => (item.title ? renameProject(item.title, e.target.value) : update({ title: e.target.value }))} />
             <select value={item.category} onChange={(e) => update({ category: e.target.value })}>
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
@@ -162,6 +184,20 @@ export default function ProjectsEditor({ items, onSave }) {
             <textarea placeholder="full description" value={item.overview || ""} onChange={(e) => update({ overview: e.target.value })} rows={6} />
             <textarea placeholder="key features, one per line" value={(item.features || []).join("\n")} onChange={(e) => update({ features: e.target.value.split("\n") })} rows={6} />
             <textarea placeholder="tech stack, one per line as  Name | what it does" value={stackToText(item.stack)} onChange={(e) => update({ stack: textToStack(e.target.value) })} rows={6} />
+
+            <h3 className="admin-subhead">Related projects</h3>
+            <div className="admin-related">
+              {draft.filter((p) => p.title && p.title !== item.title).map((p) => (
+                <label key={p.title} className="admin-check">
+                  <input
+                    type="checkbox"
+                    checked={relatedTo(item.title, draft).some((r) => r.title === p.title)}
+                    onChange={(e) => toggleRelated(item.title, p.title, e.target.checked)}
+                  />
+                  {p.title}
+                </label>
+              ))}
+            </div>
 
             <h3 className="admin-subhead">Screenshots</h3>
             <ScreenshotsEditor items={item.screenshots || []} onChange={(screenshots) => update({ screenshots })} />

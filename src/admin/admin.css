@@ -582,3 +582,9 @@ h3 {
   display: flex;
   gap: 6px;
 }
+
+.admin-related {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 6px;
+}
