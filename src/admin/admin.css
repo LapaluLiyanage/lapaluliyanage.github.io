@@ -545,3 +545,40 @@ h3 {
   color: var(--bg);
   font-weight: 700;
 }
+
+.admin-subhead {
+  margin: 12px 0 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.admin-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.admin-check input {
+  width: auto;
+}
+.shot-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+.shot-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.shot-item img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: contain;
+  background: rgba(127, 127, 127, 0.15);
+  border-radius: 6px;
+}
+.shot-item-actions {
+  display: flex;
+  gap: 6px;
+}

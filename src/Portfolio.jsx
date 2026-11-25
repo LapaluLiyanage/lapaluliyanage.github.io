@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { DEFAULT_CONTENT } from "./lib/defaultContent";
 import { fetchSiteContent } from "./lib/content";
-import { PROJECT_DETAILS } from "./lib/projectDetails";
+import { withDefaults } from "./lib/defaultProjects";
 import "./Portfolio.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -63,6 +63,12 @@ const ICON_MAP = {
   "Manifest V3": "chrome/chrome-original.svg",
   Node: "nodejs/nodejs-original.svg",
   Gemini: "google/google-original.svg",
+  TypeScript: "typescript/typescript-original.svg",
+  Capacitor: "capacitor/capacitor-original.svg",
+  Tauri: "tauri/tauri-original.svg",
+  FastAPI: "fastapi/fastapi-original.svg",
+  Firebase: "firebase/firebase-original.svg",
+  Playwright: "playwright/playwright-original.svg",
 };
 
 function skillIcon(name) {
@@ -112,23 +118,66 @@ function TechLogo({ name }) {
   );
 }
 
+function ProjectGallery({ title, shots, active, onSelect }) {
+  return (
+    <>
+      <h4 className="dv-modal-h">Screenshots</h4>
+      <div className="dv-gallery">
+        {shots.map((s, i) => (
+          <button key={s.image + i} type="button" className="dv-shot" onClick={() => onSelect(i)}>
+            <img src={s.image} alt={s.caption || `${title} screenshot ${i + 1}`} loading="lazy" />
+            {s.caption && <span className="dv-shot-caption mono">{s.caption}</span>}
+          </button>
+        ))}
+      </div>
+      {active !== null && shots[active] && (
+        <div className="dv-lightbox" role="dialog" aria-label="Screenshot viewer" onClick={() => onSelect(null)}>
+          <img src={shots[active].image} alt={shots[active].caption || title} />
+          <div className="dv-lightbox-bar mono" onClick={(e) => e.stopPropagation()}>
+            {shots.length > 1 && (
+              <button type="button" onClick={() => onSelect((active + shots.length - 1) % shots.length)} aria-label="Previous screenshot">←</button>
+            )}
+            <span>{shots[active].caption || title} · {active + 1}/{shots.length}</span>
+            {shots.length > 1 && (
+              <button type="button" onClick={() => onSelect((active + 1) % shots.length)} aria-label="Next screenshot">→</button>
+            )}
+            <button type="button" onClick={() => onSelect(null)} aria-label="Close screenshot">✕</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 function ProjectModal({ project, onClose }) {
   const closeRef = useRef(null);
-  const details = PROJECT_DETAILS[project.title];
-  const stack = details ? details.stack : project.tech.map((t) => [t, ""]);
+  const [shot, setShot] = useState(null);
+  const shots = (project.screenshots || []).filter((s) => s.image);
+  const features = (project.features || []).filter(Boolean);
+  const stack = project.stack?.length ? project.stack : project.tech.map((name) => ({ name, role: "" }));
 
   useEffect(() => {
     const prevFocus = document.activeElement;
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
     closeRef.current && closeRef.current.focus();
     return () => {
-      document.removeEventListener("keydown", onKey);
       prevFocus && prevFocus.focus && prevFocus.focus();
     };
-  }, [onClose]);
+  }, []);
+
+  // Escape closes the screenshot viewer first, then the project.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        if (shot === null) onClose();
+        else setShot(null);
+      } else if (shot !== null && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
+        const step = e.key === "ArrowRight" ? 1 : shots.length - 1;
+        setShot((shot + step) % shots.length);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose, shot, shots.length]);
 
   return createPortal(
     <div className="dv-modal-backdrop" onClick={onClose} data-lenis-prevent="">
@@ -158,14 +207,16 @@ function ProjectModal({ project, onClose }) {
         <div className="dv-modal-body">
           <div className="dv-eyebrow">PROJECT {project.num}</div>
           <h3 className="dv-modal-title">{project.title}</h3>
-          {details && <p className="dv-modal-tagline">{details.tagline}</p>}
-          <p className="dv-modal-text">{details ? details.overview : project.description}</p>
+          {project.tagline && <p className="dv-modal-tagline">{project.tagline}</p>}
+          <p className="dv-modal-text">{project.overview || project.description}</p>
 
-          {details && (
+          {shots.length > 0 && <ProjectGallery title={project.title} shots={shots} active={shot} onSelect={setShot} />}
+
+          {features.length > 0 && (
             <>
               <h4 className="dv-modal-h">Key features</h4>
               <ul className="dv-modal-list">
-                {details.features.map((f) => (
+                {features.map((f) => (
                   <li key={f}>{f}</li>
                 ))}
               </ul>
@@ -174,7 +225,7 @@ function ProjectModal({ project, onClose }) {
 
           <h4 className="dv-modal-h">Tech stack</h4>
           <div className="dv-modal-stack">
-            {stack.map(([name, role]) => (
+            {stack.map(({ name, role }) => (
               <div key={name} className="dv-modal-tech">
                 <TechLogo name={name} />
                 <div>
@@ -186,9 +237,11 @@ function ProjectModal({ project, onClose }) {
           </div>
 
           <div className="dv-project-actions">
-            <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="dv-btn-outline sm">
-              View Project ↗
-            </a>
+            {project.repoUrl && (
+              <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="dv-btn-outline sm">
+                View Project ↗
+              </a>
+            )}
             {project.demoUrl && (
               <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="dv-btn-solid sm">
                 Live Demo
@@ -627,7 +680,8 @@ export default function Portfolio() {
 
   const featured = useMemo(() => {
     const used = new Set();
-    return content.projects.map((f, i) => {
+    return content.projects.map((saved, i) => {
+      const f = withDefaults(saved);
       const keys = f.keys.split(",").map((k) => k.trim().toLowerCase()).filter(Boolean);
       const r = repos.find((x) => !used.has(x.id) && keys.some((k) => x.name.toLowerCase().replace(/[-_ ]/g, "").includes(k)));
       if (r) used.add(r.id);
@@ -635,7 +689,7 @@ export default function Portfolio() {
         ...f,
         num: String(i + 1).padStart(2, "0"),
         meta: r ? `★ ${r.stargazers_count} · ${ago(r.pushed_at)}` : "",
-        repoUrl: r ? r.html_url : "https://github.com/LapaluLiyanage",
+        repoUrl: f.hideRepo ? "" : f.repoUrl || (r ? r.html_url : "https://github.com/LapaluLiyanage"),
         demoUrl: f.demoUrl || (r && r.homepage ? r.homepage : ""),
       };
     });
@@ -1011,7 +1065,11 @@ export default function Portfolio() {
                   ))}
                 </div>
                 <div className="dv-project-actions">
-                  <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" className="dv-btn-outline sm">View Project ↗</a>
+                  {p.repoUrl ? (
+                    <a href={p.repoUrl} target="_blank" rel="noopener noreferrer" className="dv-btn-outline sm">View Project ↗</a>
+                  ) : (
+                    <button type="button" className="dv-btn-outline sm" onClick={(e) => { e.stopPropagation(); setOpenProject(p); }}>Details</button>
+                  )}
                   {p.demoUrl && (
                     <a href={p.demoUrl} target="_blank" rel="noopener noreferrer" className="dv-btn-solid sm">Live Demo</a>
                   )}

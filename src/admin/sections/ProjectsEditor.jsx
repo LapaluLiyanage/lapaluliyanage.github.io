@@ -3,6 +3,8 @@ import ListEditor from "../components/ListEditor.jsx";
 import ImageUpload from "../components/ImageUpload.jsx";
 import { toCsv, fromCsv } from "../csv.js";
 import { useSectionSave } from "../useSectionSave.js";
+import ScreenshotsEditor from "../components/ScreenshotsEditor.jsx";
+import { mergeWithDefaults, withDefaults } from "../../lib/defaultProjects.js";
 
 const GITHUB_USER = "LapaluLiyanage";
 const CATEGORIES = ["FULL-STACK", "BACKEND", "AI-ML", "MOBILE", "TOOLS"];
@@ -21,6 +23,24 @@ function guessCategory(repo) {
   if (/(web|flask|django|react|next|site|lms|full.?stack|pay)/.test(s) || ["HTML", "CSS", "JavaScript", "TypeScript", "PHP", "Vue"].includes(repo.language)) return "FULL-STACK";
   return "TOOLS";
 }
+
+// One "Name | role" line per entry. Text is kept as typed so the cursor doesn't
+// jump while editing; cleanProject trims it on save.
+const stackToText = (stack) => (stack || []).map((s) => (s.role === undefined ? s.name : `${s.name}|${s.role}`)).join("\n");
+const textToStack = (text) =>
+  text
+    ? text.split("\n").map((line) => {
+        const i = line.indexOf("|");
+        return i < 0 ? { name: line } : { name: line.slice(0, i), role: line.slice(i + 1) };
+      })
+    : [];
+
+const cleanProject = (p) => ({
+  ...p,
+  features: (p.features || []).map((f) => f.trim()).filter(Boolean),
+  stack: (p.stack || []).map((s) => ({ name: s.name.trim(), role: (s.role || "").trim() })).filter((s) => s.name),
+  screenshots: (p.screenshots || []).filter((s) => s.image),
+});
 
 function useGithubRepos(user) {
   const [repos, setRepos] = useState([]);
@@ -43,7 +63,7 @@ function useGithubRepos(user) {
 }
 
 export default function ProjectsEditor({ items, onSave }) {
-  const [draft, setDraft] = useState(items);
+  const [draft, setDraft] = useState(() => items.map(withDefaults));
   const { status, save } = useSectionSave(onSave);
   const { repos, status: reposStatus } = useGithubRepos(GITHUB_USER);
   const [selectedRepo, setSelectedRepo] = useState("");
@@ -96,10 +116,18 @@ export default function ProjectsEditor({ items, onSave }) {
         </span>
       </div>
 
+      <div className="github-import">
+        <button type="button" onClick={() => setDraft(mergeWithDefaults(draft))}>+ Add missing built-in projects</button>
+        <span className="github-import-status">
+          Adds new projects, folds the old Chordarium entry into Chordarium Hub and restores the built-in order. Your edits are kept. Press Save to publish.
+        </span>
+      </div>
+
       <ListEditor
         items={draft}
         onChange={setDraft}
-        newItem={{ title: "", category: "FULL-STACK", keys: "", image: "", demoUrl: "", description: "", tech: [] }}
+        newItem={{ title: "", category: "FULL-STACK", keys: "", image: "", demoUrl: "", repoUrl: "", description: "", tech: [], tagline: "", overview: "", features: [], stack: [], screenshots: [] }}
+        collapsible
         itemLabel={(item) => item.title}
         renderFields={(item, update) => (
           <>
@@ -111,13 +139,29 @@ export default function ProjectsEditor({ items, onSave }) {
             </select>
             <input placeholder="match GitHub repo (comma separated)" value={item.keys} onChange={(e) => update({ keys: e.target.value })} />
             <input placeholder="live demo URL (optional, overrides the repo's website)" value={item.demoUrl || ""} onChange={(e) => update({ demoUrl: e.target.value })} />
-            <textarea placeholder="description" value={item.description} onChange={(e) => update({ description: e.target.value })} rows={3} />
-            <input placeholder="tech, comma separated" value={toCsv(item.tech)} onChange={(e) => update({ tech: fromCsv(e.target.value) })} />
+            <input placeholder="source code URL (optional, overrides the repo match)" value={item.repoUrl || ""} onChange={(e) => update({ repoUrl: e.target.value })} />
+            <label className="admin-check">
+              <input type="checkbox" checked={!!item.hideRepo} onChange={(e) => update({ hideRepo: e.target.checked })} />
+              Private project: hide the "View Project" button
+            </label>
+
+            <h3 className="admin-subhead">Card</h3>
+            <textarea placeholder="short description shown on the card" value={item.description} onChange={(e) => update({ description: e.target.value })} rows={3} />
+            <input placeholder="tech, comma separated" defaultValue={toCsv(item.tech)} key={`tech-${item.title}`} onChange={(e) => update({ tech: fromCsv(e.target.value) })} />
             <ImageUpload value={item.image} onChange={(url) => update({ image: url })} pathPrefix="projects" aspect={3 / 2} outW={900} />
+
+            <h3 className="admin-subhead">Details popup</h3>
+            <input placeholder="tagline" value={item.tagline || ""} onChange={(e) => update({ tagline: e.target.value })} />
+            <textarea placeholder="full description" value={item.overview || ""} onChange={(e) => update({ overview: e.target.value })} rows={6} />
+            <textarea placeholder="key features, one per line" value={(item.features || []).join("\n")} onChange={(e) => update({ features: e.target.value.split("\n") })} rows={6} />
+            <textarea placeholder="tech stack, one per line as  Name | what it does" value={stackToText(item.stack)} onChange={(e) => update({ stack: textToStack(e.target.value) })} rows={6} />
+
+            <h3 className="admin-subhead">Screenshots</h3>
+            <ScreenshotsEditor items={item.screenshots || []} onChange={(screenshots) => update({ screenshots })} />
           </>
         )}
       />
-      <button className="primary-btn" onClick={() => save(draft)}>Save</button>
+      <button className="primary-btn" onClick={() => save(draft.map(cleanProject))}>Save</button>
       {status && <span className="admin-save-status">{status}</span>}
     </div>
   );

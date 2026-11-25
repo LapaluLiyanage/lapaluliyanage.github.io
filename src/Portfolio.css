@@ -1822,3 +1822,75 @@ body {
     margin-top: 70px;
   }
 }
+
+/* Project screenshots */
+.dv-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+.dv-shot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.dv-shot img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  transition: border-color 0.2s ease;
+}
+.dv-shot:hover img,
+.dv-shot:focus-visible img {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+.dv-shot-caption {
+  font-size: 11px;
+  opacity: 0.65;
+}
+.dv-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.94);
+}
+.dv-lightbox img {
+  max-width: 100%;
+  max-height: calc(100vh - 110px);
+  object-fit: contain;
+}
+.dv-lightbox-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #fff;
+}
+.dv-lightbox-bar button {
+  padding: 6px 12px;
+  color: #fff;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* keep paragraph breaks typed in the admin panel */
+.dv-modal-text {
+  white-space: pre-line;
+}
