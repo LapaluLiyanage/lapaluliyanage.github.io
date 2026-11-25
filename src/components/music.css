@@ -1,0 +1,262 @@
+.mg-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.mg-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.mg-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--border-2);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.mg-btn:hover,
+.mg-btn:focus-visible {
+  border-color: #c8f542;
+}
+
+/* little equaliser that dances while the grid is shuffling */
+.mg-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 16px;
+  margin-right: 4px;
+}
+.mg-eq i {
+  width: 3px;
+  height: 4px;
+  background: #c8f542;
+  border-radius: 2px;
+}
+.mg-eq.on i {
+  animation: mg-eq 0.9s ease-in-out infinite alternate;
+}
+.mg-eq.on i:nth-child(2) { animation-delay: -0.5s; }
+.mg-eq.on i:nth-child(3) { animation-delay: -0.2s; }
+.mg-eq.on i:nth-child(4) { animation-delay: -0.7s; }
+.mg-eq.on i:nth-child(5) { animation-delay: -0.35s; }
+@keyframes mg-eq {
+  from { height: 3px; }
+  to { height: 16px; }
+}
+
+/* grid shaped to the photos: 2:3 upright and 3:2 wide */
+.mg-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+.mg-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.mg-tile.tall { aspect-ratio: 2 / 3; }
+.mg-tile.wide { aspect-ratio: 3 / 2; }
+@media (max-width: 760px) {
+  .mg-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .mg-column { gap: 8px; }
+  .mg-tile .dv-music-caption { font-size: 9px; }
+}
+
+/* flipping tiles */
+button.mg-tile {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  perspective: 900px;
+}
+.mg-flipper {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.9s cubic-bezier(0.65, -0.15, 0.25, 1.2);
+}
+.mg-flipper.y { transform: rotateY(var(--turn)); }
+.mg-flipper.x { transform: rotateX(var(--turn)); }
+.mg-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+.mg-flipper.y .mg-face.back { transform: rotateY(180deg); }
+.mg-flipper.x .mg-face.back { transform: rotateX(180deg); }
+.mg-face img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.mg-fill {
+  object-fit: cover;
+  filter: blur(18px) brightness(0.55);
+  transform: scale(1.15);
+}
+.mg-photo {
+  object-fit: contain;
+}
+.mg-tile .dv-music-caption {
+  top: 10px;
+  bottom: auto;
+  left: 10px;
+  z-index: 2;
+  max-width: calc(100% - 20px);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.mg-tile::after {
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* album cards: a small stack of prints that fans out on hover */
+.mg-albums {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 22px;
+}
+.mg-album {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  animation: mg-in 0.5s ease both;
+  animation-delay: calc(var(--i) * 60ms);
+}
+.mg-album:hover,
+.mg-album:focus-visible {
+  border-color: var(--border-2);
+}
+.mg-stack {
+  position: relative;
+  display: block;
+  height: 170px;
+  margin-bottom: 10px;
+}
+.mg-print {
+  position: absolute;
+  top: 8px;
+  left: 8%;
+  width: 84%;
+  height: 154px;
+  object-fit: contain;
+  background: #101014;
+  border: 4px solid #f2f2ec;
+  border-radius: 6px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+}
+.mg-print.p0 { z-index: 3; }
+.mg-print.p1 { z-index: 2; transform: rotate(-4deg); }
+.mg-print.p2 { z-index: 1; transform: rotate(5deg); }
+.mg-album:hover .p0,
+.mg-album:focus-visible .p0 { transform: translateY(-6px) scale(1.02); }
+.mg-album:hover .p1,
+.mg-album:focus-visible .p1 { transform: translateX(-9%) rotate(-10deg); }
+.mg-album:hover .p2,
+.mg-album:focus-visible .p2 { transform: translateX(9%) rotate(11deg); }
+.mg-album-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+.mg-album-native {
+  font-size: 14px;
+  color: #c8f542;
+}
+.mg-album-meta,
+.mg-meta,
+.mg-credit {
+  font-size: 11px;
+  opacity: 0.65;
+}
+.mg-album-text {
+  font-size: 13px;
+  line-height: 1.55;
+  opacity: 0.75;
+}
+
+/* photos inside an album */
+.mg-wall {
+  columns: 3 200px;
+  column-gap: 10px;
+  margin-top: 18px;
+}
+.mg-shot {
+  display: block;
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  break-inside: avoid;
+  animation: mg-in 0.5s ease both;
+  animation-delay: calc(var(--i) * 70ms);
+}
+.mg-shot img {
+  display: block;
+  width: 100%;
+  transition: transform 0.4s ease;
+}
+.mg-shot:hover img {
+  transform: scale(1.05);
+}
+.mg-zoom {
+  animation: mg-in 0.3s ease both;
+}
+@keyframes mg-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mg-flipper,
+  .mg-print,
+  .mg-shot img {
+    transition: none;
+  }
+  .mg-album,
+  .mg-shot,
+  .mg-zoom,
+  .mg-eq.on i {
+    animation: none;
+  }
+}
+
+.dv-lightbox > img {
+  min-height: 0;
+  max-height: calc(100dvh - 110px);
+}
+
+/* no shading over the photos; the captions have their own background */
+button.mg-tile::after {
+  display: none;
+}

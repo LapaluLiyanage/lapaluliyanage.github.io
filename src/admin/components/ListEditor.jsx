@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // collapsible: show one row's fields at a time, for long lists with many fields.
-export default function ListEditor({ items, onChange, renderFields, newItem, itemLabel, collapsible = false }) {
+export default function ListEditor({ items, onChange, renderFields, newItem, itemLabel, collapsible = false, rowActions }) {
   const [openRow, setOpenRow] = useState(null);
 
   function updateAt(index, patch) {
@@ -36,6 +36,7 @@ export default function ListEditor({ items, onChange, renderFields, newItem, ite
           <div className="list-editor-row-head">
             <span>{itemLabel(item) || `Item ${i + 1}`}</span>
             <div className="list-editor-row-actions">
+              {rowActions && rowActions(item, (patch) => updateAt(i, patch))}
               {collapsible && (
                 <button type="button" aria-expanded={openRow === i} onClick={() => setOpenRow(openRow === i ? null : i)}>
                   {openRow === i ? "Close" : "Edit"}

@@ -153,7 +153,7 @@ export const DEFAULT_PROJECTS = [
       ["Gemini", "Demand prediction and booking assistant"],
       ["Testcontainers", "Throwaway Postgres for realistic tests"],
     ]),
-    screenshots: [],
+    screenshots: shots("parking", ["Booking flow (diagram)", "REST API overview (diagram)"]),
   },
   {
     keys: "devscore, scriptfusion",
@@ -219,7 +219,7 @@ export const DEFAULT_PROJECTS = [
     keys: "smartpos",
     title: "MRA SmartPOS Pro",
     category: "FULL-STACK",
-    image: "/projects/smartpos.jpg",
+    image: "/projects/smartpos-cover.jpg",
     hideRepo: true,
     description: "POS, installment, warranty and profit system for a furniture and electricals shop. Keeps selling when the internet is down.",
     tech: ["React", "TypeScript", "Supabase", "Tauri", "PWA"],
@@ -458,7 +458,7 @@ export const DEFAULT_PROJECTS = [
       ["Room", "Local database"],
       ["Gemini", "Health-assistant chat"],
     ]),
-    screenshots: [],
+    screenshots: shots("medibloom", ["UI design: home, add medicine, calendar, history", "UI design: assistant, mood, profile, login"]),
   },
   {
     keys: "smartplanner",
@@ -500,6 +500,8 @@ export function withDefaults(project) {
     merged.overview = project.description;
     merged.description = base.description;
   }
+  // An empty gallery takes the built-in one; use Hide to remove a project.
+  if (!project.screenshots?.length) merged.screenshots = base.screenshots;
   // An address pasted into the repo-match field would never match a repo name.
   if (/^https?:/.test(project.keys || "")) merged.keys = base.keys;
   return merged;

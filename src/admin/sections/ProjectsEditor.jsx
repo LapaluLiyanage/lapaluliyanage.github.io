@@ -116,6 +116,8 @@ export default function ProjectsEditor({ items, onSave }) {
         </span>
       </div>
 
+      <p className="admin-hint">"Hide" takes a project off the site without deleting it. Press Save to apply.</p>
+
       <div className="github-import">
         <button type="button" onClick={() => setDraft(mergeWithDefaults(draft))}>+ Add missing built-in projects</button>
         <span className="github-import-status">
@@ -128,7 +130,12 @@ export default function ProjectsEditor({ items, onSave }) {
         onChange={setDraft}
         newItem={{ title: "", category: "FULL-STACK", keys: "", image: "", demoUrl: "", repoUrl: "", description: "", tech: [], tagline: "", overview: "", features: [], stack: [], screenshots: [] }}
         collapsible
-        itemLabel={(item) => item.title}
+        rowActions={(item, update) => (
+          <button type="button" aria-pressed={!!item.hidden} onClick={() => update({ hidden: !item.hidden })}>
+            {item.hidden ? "Show" : "Hide"}
+          </button>
+        )}
+        itemLabel={(item) => (item.hidden ? `${item.title} (hidden)` : item.title)}
         renderFields={(item, update) => (
           <>
             <input placeholder="title" value={item.title} onChange={(e) => update({ title: e.target.value })} />

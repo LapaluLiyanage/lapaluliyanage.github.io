@@ -7,6 +7,8 @@ import Lenis from "lenis";
 import { DEFAULT_CONTENT } from "./lib/defaultContent";
 import { fetchSiteContent } from "./lib/content";
 import { withDefaults } from "./lib/defaultProjects";
+import { DEFAULT_ALBUMS } from "./lib/musicAlbums";
+import MusicGallery from "./components/MusicGallery.jsx";
 import "./Portfolio.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -69,13 +71,35 @@ const ICON_MAP = {
   FastAPI: "fastapi/fastapi-original.svg",
   Firebase: "firebase/firebase-original.svg",
   Playwright: "playwright/playwright-original.svg",
+  "React 18": "react/react-original.svg",
+  SciPy: "https://cdn.simpleicons.org/scipy",
+  Rust: "https://cdn.simpleicons.org/rust/white",
+  Preact: "https://cdn.simpleicons.org/preact",
+  "PDF.js": "https://cdn.simpleicons.org/mozilla/white",
+  PWA: "https://cdn.simpleicons.org/pwa/white",
+  JWT: "https://cdn.simpleicons.org/jsonwebtokens/white",
+  "three.js": "https://cdn.simpleicons.org/threedotjs/white",
+  Vite: "https://cdn.simpleicons.org/vite",
+  GSAP: "https://cdn.simpleicons.org/greensock",
+  ffmpeg: "https://cdn.simpleicons.org/ffmpeg",
+  Demucs: "https://cdn.simpleicons.org/meta",
+  "sentence-transformers": "https://cdn.simpleicons.org/huggingface",
 };
+
+// Libraries with no logo of their own get a symbol for what they do.
+const GLYPHS = {
+  doc: "M6 3h8l4 4v14H6zM14 3v4h4M9 12h6M9 16h6",
+  wave: "M3 12h2M7 8v8M11 4v16M15 7v10M19 10v4",
+  box: "M12 3l8 4.5v9L12 21l-8-4.5v-9zM4 7.5l8 4.5 8-4.5M12 12v9",
+  code: "M8 8l-5 4 5 4M16 8l5 4-5 4M14 5l-4 14",
+};
+const GLYPH_FOR = { "pdf-lib": "doc", librosa: "wave", beat_this: "wave", "BTC transformer": "wave", Testcontainers: "box", OOP: "box" };
 
 function skillIcon(name) {
   const v = ICON_MAP[name];
   const path = Array.isArray(v) ? v[0] : v;
   const invert = Array.isArray(v) && v[1];
-  return path ? { src: DEV + path, invert } : null;
+  return path ? { src: path.startsWith("http") ? path : DEV + path, invert } : null;
 }
 
 const ROW_A = ["Java", "Spring Boot", "Python", "Flask", "JavaScript", "React", "Node.js", "C++", "Android", "Express"];
@@ -103,7 +127,13 @@ function TechLogo({ name }) {
   const [failed, setFailed] = useState(false);
   const icon = skillIcon(name);
   if (!icon || failed) {
-    return <span className="dv-modal-logo mono">{name.slice(0, 2).toUpperCase()}</span>;
+    return (
+      <span className="dv-modal-logo mono">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d={GLYPHS[GLYPH_FOR[name] || "code"]} />
+        </svg>
+      </span>
+    );
   }
   return (
     <span className="dv-modal-logo">
@@ -680,8 +710,7 @@ export default function Portfolio() {
 
   const featured = useMemo(() => {
     const used = new Set();
-    return content.projects.map((saved, i) => {
-      const f = withDefaults(saved);
+    return content.projects.map(withDefaults).filter((p) => !p.hidden).map((f, i) => {
       const keys = f.keys.split(",").map((k) => k.trim().toLowerCase()).filter(Boolean);
       const r = repos.find((x) => !used.has(x.id) && keys.some((k) => x.name.toLowerCase().replace(/[-_ ]/g, "").includes(k)));
       if (r) used.add(r.id);
@@ -1179,14 +1208,7 @@ export default function Portfolio() {
           <h2 data-rv="" className="dv-h2">Off the <span className="accent">keyboard</span>.</h2>
           <p data-rv="" className="dv-music-lead">{content.music.lead}</p>
         </div>
-        <div className={`dv-music-grid${narrow ? " narrow" : ""}`}>
-          {content.music.photos.map((m, i) => (
-            <div key={i} data-rv="" className="dv-music-tile">
-              <img src={m.image} alt={m.caption} className="dv-music-image" loading="lazy" />
-              <div className="dv-music-caption">{m.caption}</div>
-            </div>
-          ))}
-        </div>
+        <MusicGallery photos={content.music.photos} albums={content.music.albums || DEFAULT_ALBUMS} />
         <div className="dv-music-highlights">
           {content.music.highlights.map((x) => (
             <div key={x.title} data-rv="" className="dv-highlight-card">

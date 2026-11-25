@@ -20,7 +20,7 @@ async function shrink(file) {
   );
 }
 
-export default function ScreenshotsEditor({ items, onChange }) {
+export default function ScreenshotsEditor({ items, onChange, folder = "projects/shots", label = "Add screenshots" }) {
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
 
@@ -34,7 +34,7 @@ export default function ScreenshotsEditor({ items, onChange }) {
       for (const [i, file] of files.entries()) {
         setBusy(`Uploading ${i + 1} of ${files.length}…`);
         const blob = await shrink(file);
-        const path = `projects/shots/${Date.now()}-${i}.jpg`;
+        const path = `${folder}/${Date.now()}-${i}.jpg`;
         const { error: uploadError } = await supabase.storage.from("site-images").upload(path, blob, { upsert: false, contentType: "image/jpeg" });
         if (uploadError) throw uploadError;
         added.push({ image: supabase.storage.from("site-images").getPublicUrl(path).data.publicUrl, caption: "" });
@@ -71,7 +71,7 @@ export default function ScreenshotsEditor({ items, onChange }) {
           </div>
         ))}
       </div>
-      <input type="file" accept="image/*" multiple onChange={addFiles} disabled={!!busy} aria-label="Add screenshots" />
+      <input type="file" accept="image/*" multiple onChange={addFiles} disabled={!!busy} aria-label={label} />
       {busy && <span className="image-upload-status">{busy}</span>}
       {error && <p className="admin-error">{error}</p>}
     </div>
