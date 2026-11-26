@@ -422,7 +422,7 @@ function LinkedinMark(props) {
 function StatCounter({ value }) {
   const ref = useRef(null);
   const visible = useRef(false);
-  const started = useRef(false);
+  const started = useRef(null);
   const match = typeof value === "string" ? value.match(/^(\d+)(.*)$/) : null;
   const target = match ? parseInt(match[1], 10) : null;
   const suffix = match ? match[2] : "";
@@ -435,8 +435,8 @@ function StatCounter({ value }) {
   // IntersectionObserver callback still sees the final GitHub-loaded value
   // instead of whatever `target` was null-at-mount.
   const tryStart = useCallback(() => {
-    if (started.current || !visible.current || targetRef.current == null) return;
-    started.current = true;
+    if (!visible.current || targetRef.current == null || started.current === targetRef.current) return;
+    started.current = targetRef.current;
     const obj = { v: 0 };
     gsap.to(obj, {
       v: targetRef.current,
@@ -634,6 +634,19 @@ function useTyped(phrases) {
   return typed;
 }
 
+// GitHub limits anonymous requests per network, so keep a number to fall back on:
+// the last one this browser saw, or this one (correct in November 2026).
+const REPO_COUNT_KEY = "gh-public-repos";
+const REPO_COUNT_FALLBACK = 25;
+
+function lastRepoCount() {
+  try {
+    return Number(localStorage.getItem(REPO_COUNT_KEY)) || REPO_COUNT_FALLBACK;
+  } catch {
+    return REPO_COUNT_FALLBACK;
+  }
+}
+
 function useGithub(user) {
   const [state, setState] = useState({ profile: null, repos: [], status: "loading" });
   useEffect(() => {
@@ -746,7 +759,16 @@ export default function Portfolio() {
   const filtered = filter === "All" ? featured : featured.filter((p) => catOf(p) === filter.toLowerCase());
   const visibleProjects = showAll ? filtered : filtered.slice(0, 6);
   const hasMore = filtered.length > 6;
-  const repoCount = profile && profile.public_repos != null ? profile.public_repos : repos.length || null;
+  const liveRepoCount = profile?.public_repos ?? null;
+  const repoCount = liveRepoCount ?? lastRepoCount();
+  useEffect(() => {
+    if (liveRepoCount == null) return;
+    try {
+      localStorage.setItem(REPO_COUNT_KEY, String(liveRepoCount));
+    } catch {
+      /* private browsing: nothing to remember */
+    }
+  }, [liveRepoCount]);
 
   useRevealOnScroll(rootRef, [filter, showAll]);
 
@@ -990,16 +1012,16 @@ export default function Portfolio() {
         </p>
         <div className="dv-stats-grid">
           <div data-rv="" className="dv-stat-card">
-            <StatCounter value={content.about.statProjectsShipped} />
-            <div className="dv-stat-label">Projects shipped</div>
+            <StatCounter value={String(featured.length)} />
+            <div className="dv-stat-label">Projects built</div>
           </div>
           <div data-rv="" className="dv-stat-card">
-            <StatCounter value={repoCount != null ? String(repoCount) : "—"} />
-            <div className="dv-stat-label">Public GitHub repos (live)</div>
+            <StatCounter value={String(repoCount)} />
+            <div className="dv-stat-label">Public GitHub repos</div>
           </div>
           <div data-rv="" className="dv-stat-card">
             <StatCounter value={content.about.statPapers} />
-            <div className="dv-stat-label">IEEE-format paper co-authored</div>
+            <div className="dv-stat-label">Conference paper accepted (ICATC 2026)</div>
           </div>
         </div>
         <div className="dv-about-grid">

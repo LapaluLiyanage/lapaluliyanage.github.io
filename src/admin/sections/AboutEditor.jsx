@@ -43,16 +43,11 @@ export default function AboutEditor({ about, onSave }) {
           "Why choose me"
           <textarea rows={3} value={draft.whyChooseMe} onChange={(e) => set({ whyChooseMe: e.target.value })} />
         </label>
-        <div className="two-col">
-          <label>
-            Stat: projects shipped
-            <input value={draft.statProjectsShipped} onChange={(e) => set({ statProjectsShipped: e.target.value })} />
-          </label>
-          <label>
-            Stat: papers co-authored
-            <input value={draft.statPapers} onChange={(e) => set({ statPapers: e.target.value })} />
-          </label>
-        </div>
+        <label>
+          Stat: conference papers accepted
+          <input value={draft.statPapers} onChange={(e) => set({ statPapers: e.target.value })} />
+        </label>
+        <p className="admin-hint">The project and GitHub repo numbers are counted automatically.</p>
       </div>
       <button className="primary-btn" onClick={() => save(draft)}>Save</button>
       {status && <span className="admin-save-status">{status}</span>}
